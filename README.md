@@ -1,34 +1,48 @@
-# Parcel
+# PV1 Neo
 
-Visual programming for data pipeline automation on local PC. Excel+.
+Version: PV1 Neo v0.1.0  
+Last Update: 2024-009
 
-This is a node-only Windows-only implementation for Parcel conceptual and functional demonstrations. It would suffice for the purpose of testing libraries and show casing the core software aspects of Parcel workflows. To keep things lean, we will NOT implement any additional frameworks/components on this including dashboard capabilities.
-
-For a demonstration of dashboard capabilities from an earlier iteration, see https://github.com/Charles-Zhang-Parcel/Parcel_V1_Prototype
+Windows-only front-end for Parcel NExT ecosystem, a visual programming platform. This implementation is for development purpose and lightweight usage and covers only subset of POS features. It's node-only Windows-only. It would suffice for the purpose of testing libraries and showcasing the core software aspects of Parcel workflows.
 
 ```mermaid
 ---
-title: Key Architectural Components
+title: Solution Architecture
 ---
 flowchart TD
-    id010[Parcel V1]
-    id020[Nodify WPF]
-    id040[Core Shared]
+    id010[PV1 Neo]
+    id020[Nodify Frontend]
+    id040[Parcel NExT Core]
     id030[Toolboxes]
-    id050[Frontend WPF]
-    id060[Assembly Loader #WIP]
+    id050[Windows WPF]
+    id060[Assembly Loader]
+    id070[Parcel NExT Libraries]
 
     id010 --> id020
-    id040 --> id020
+    id010 --> id030
     id020 --> id050
+
+    id030 --> id060 
+    id030 --> id070
+    id030 --> id040
 ```
+
+Below is an overview of earlier versions:
+
+|Version|Parcel Original Prototype|PV1|PV1 Neo|
+|-|-|-|-|
+|Description|Original concept, <br/>including dashboard component, <br/>based on ASP.Net Core (hybrid mode).|Cleaned up version of original concept,<br/> migrated to .Net 8.|Latest attempt to make it POS compliance,<br/>Official Windows frontend.|
+|Status|Archive Only|Maintenance Only|Active Use|
+|Feature Set|Demo Only|Demo Only|Partially POS Compliant; Full PSL|
+|Dashboard Feature|Native|N/A|N/A|
+|Link|[Link](https://github.com/Charles-Zhang-Parcel/Parcel_V1_Prototype)|[Link](https://github.com/Charles-Zhang-Parcel/Parcel_V1)|[Link](https://github.com/Charles-Zhang-Parcel/PV1_Neo)|
 
 ## Setup
 
-All key components are implemented inside `Parcel.Shared` assembly, the front end is implemented in `Parcel.FrontEnd.NodifyWPF`, and all functional components are implemented in various **Toolboxes**.
+All key components are implemented inside `Parcel.Shared` assembly, the front end is implemented in `Parcel.Neo`, and all functional components are implemented in various **Toolboxes**.
 
 1. Simply open `.sln` solution
-2. Run `Parcel.FrontEnd.NodifyWPF` project
+2. Run `Parcel.Neo` project
 
 ### To Add New Functionalities
 
