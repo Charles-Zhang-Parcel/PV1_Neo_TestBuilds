@@ -51,14 +51,21 @@ Either inherit a class, or use shortcut methods. In the future, if we shall impl
 ## Management
 
 The corresponding ADO Epic for this is: https://dev.azure.com/ParcelEngine/Parcel/_workitems/edit/347
-This particular project is outside of scope for Parcel NExT but is otherwise very relevant for library prototyping and client demonstration purposes.
+This particular project is outside of (the formal) scope for Parcel NExT but is otherwise very relevant for library prototyping and client demonstration purposes - with proper development, it can have its own place in the Parcel NExT ecosystem.
 
 For proper utilization of this project as a framework, one must follow guidelines as to integration with Parcel NExT (except for one-shot purposes).
 
 ### TODO
 
-Pending migrating below tasks to ADO:
+Pending migrating below tasks to ADO: <!--Delete those when done-->
 
-- [ ] (Maintenance) Upgrade framework to latest .Net 8
-- [ ] (Maintenance) Implement custom binary serializer due to deprecation of .Net 6 BinaryFormatter
+- [x] (Maintenance) Upgrade framework to latest .Net 8
+- [x] (Maintenance) Implement custom binary serializer due to deprecation of .Net 6 BinaryFormatter
 - [ ] (Tooling) Implement a simple "loader" utility that allows consumption of raw C# libraries from the Parcel NExT side for a smoother development process
+
+Areas:
+- Package Manager
+- Image Preview (for plotting visualization support)
+- Plotting
+- Workloads (pack of packages)
+- Serialization
