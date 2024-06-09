@@ -1,0 +1,55 @@
+﻿<local:BaseWindow x:Class="Parcel.Neo.PopupTab"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:local="clr-namespace:Parcel.Neo"
+                  mc:Ignorable="d"
+                  WindowStyle="None" ResizeMode="NoResize"
+                  Title="Tools" Height="300" Width="150" SizeToContent="WidthAndHeight"
+                  PreviewKeyDown="PopupTab_OnPreviewKeyDown"
+                  MouseDown="PopupTab_OnMouseDown"
+                  DataContext="{Binding RelativeSource={RelativeSource self}}">
+    <DockPanel LastChildFill="True">
+        <!--Decorator Frame-->
+        <DockPanel DockPanel.Dock="Top" LastChildFill="True">
+            <Border Height="5" Background="DodgerBlue"></Border>
+        </DockPanel>
+        
+        <!--Search-->
+        <DockPanel DockPanel.Dock="Top" LastChildFill="True">
+            <Image DockPanel.Dock="Left" Width="15" Height="15"></Image>
+            <TextBox x:Name="SearchTextBox" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                     PreviewKeyDown="SearchTextBox_OnPreviewKeyDown"></TextBox>
+        </DockPanel>
+        
+        <!--Search Results-->
+        <ListBox x:Name="SearchResultsListView" ItemsSource="{Binding SearchResults}" Padding="0,0,0,4"
+                  Visibility="{Binding SearchResultsVisibility}" PreviewKeyDown="SearchResultsListView_OnPreviewKeyDown">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem"> 
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter> 
+                </Style> 
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical"/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Label Content="{Binding}" MouseDown="SearchResultsListViewLabel_OnMouseDown" Background="Transparent"></Label>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        
+        <!--Default Catagories-->
+        <ListView x:Name="ModulesListView" Padding="0,0,0,4" Visibility="{Binding DefaultCategoriesVisibility}">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical"/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+        </ListView>
+    </DockPanel>
+</local:BaseWindow>
