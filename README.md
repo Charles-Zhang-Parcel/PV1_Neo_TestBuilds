@@ -64,11 +64,12 @@ Pending migrating below tasks to ADO: <!--Delete those when done-->
 - [ ] (Tooling) Implement a simple "loader" utility that allows consumption of raw C# libraries from the Parcel NExT side for a smoother development process
 
 Areas:
-- Package Manager
-- Image Preview (for plotting visualization support)
-- Plotting
-- Workloads (pack of packages)
-- Serialization
+- [ ] Add dependency on Parcel NExT core (from NuGet)
+- [ ] Package Manager
+- [ ] Image Preview (for plotting visualization support)
+- [ ] Plotting (from PSL)
+- [ ] (PSL side work) Workloads (pack of packages)
+- [ ] Serialization
 
 Publishing:
 - [ ] Create application icon
