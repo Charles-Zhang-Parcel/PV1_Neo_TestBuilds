@@ -1,22 +1,27 @@
 # PV1 Neo
 
 Version: PV1 Neo v0.1.0  
-Last Update: 2024-009
+Last Update: 2024-06-17
+Status: Active Development
 
-Windows-only front-end for Parcel NExT ecosystem, a visual programming platform. This implementation is for development purpose and lightweight usage and covers only subset of POS features. It's node-only Windows-only. It would suffice for the purpose of testing libraries and showcasing the core software aspects of Parcel workflows.
+<!--There are two ways of making PV1 Neo POS-Compliant: Base entire runtime directly on Parcel NExT; Provides dedicated PackageLoader to allow consumption of Parcel NExT packages. The latter can be considered a small step towards eventual "rebasing".-->
+
+Windows-only front-end for Parcel NExT, a visual programming platform. This implementation is for development purpose, lightweight usage, beta tests, and covers only subset of POS features. It's node-only Windows-only and doesn't support advanced graph-native constructs. It would suffice for the purpose of testing libraries and showcasing the core software aspects of Parcel workflows.
+
+This setup also directly embedds the runtime, and (at least in beta tests) make direct reference/dependency on available toolboxes.
 
 ```mermaid
 ---
 title: Solution Architecture
 ---
 flowchart TD
-    id010[PV1 Neo]
-    id020[Nodify Frontend]
-    id040[Parcel NExT Core]
-    id030[Toolboxes]
-    id050[Windows WPF]
-    id060[Assembly Loader]
-    id070[Parcel NExT Libraries]
+    id010["PV1 Neo"]
+    id020["Nodify Frontend"]
+    id040["Parcel NExT Core"]
+    id030["Toolboxes (Parcel Packages)"]
+    id050["Windows WPF"]
+    id060["Assembly Loader"]
+    id070["Parcel NExT Libraries"]
 
     id010 --> id020
     id010 --> id030
@@ -39,14 +44,13 @@ Below is an overview of earlier versions:
 
 ## Setup
 
-All key components are implemented inside `Parcel.Neo.Base` assembly, the front end is implemented in `Parcel.Neo`, and all functional components are implemented in various **Toolboxes**.
+All key components are implemented inside `Parcel.Neo.Base` assembly, the front end is implemented in `Parcel.Neo`, and all functional components are implemented in various **Toolboxes** (will soon be completely replaced by Parcel packages).
 
 1. Simply open `.sln` solution
 2. Run `Parcel.Neo` project
 
-### To Add New Functionalities
+(TODO: Provide download instruction)
 
-Either inherit a class, or use shortcut methods. In the future, if we shall implement a way to load from assemblies automatically, it would make things way easier and allow interoperation from Parcel NExT.
 
 ## Management
 
@@ -73,3 +77,17 @@ Areas:
 
 Publishing:
 - [ ] Create application icon
+
+## Development
+
+### Loading Parcel Packages
+
+PENDING.
+
+### Loading C# Assemblies
+
+PENDING.
+
+### To Add New Functionalities
+
+Either inherit a class, or use shortcut methods. In the future, if we shall implement a way to load from assemblies automatically, it would make things way easier and allow interoperation from Parcel NExT.
