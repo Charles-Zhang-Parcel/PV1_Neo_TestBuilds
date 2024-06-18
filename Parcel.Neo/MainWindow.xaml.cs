@@ -62,8 +62,6 @@ namespace Parcel.Neo
         private const string TitlePrefix = "Parcel - Workflow Engine";
         private string _dynamicTitle = TitlePrefix;
         public string DynamicTitle { get => _dynamicTitle; set => SetField(ref _dynamicTitle, value); }
-        private string _webAccessPointUrl;
-        public string WebAccessPointUrl { get => _webAccessPointUrl; set => SetField(ref _webAccessPointUrl, value); }
         private string _currentFilePath;
         public string CurrentFilePath
         {

@@ -12,7 +12,6 @@
         xmlns:nodes="clr-namespace:Parcel.Toolbox.DataProcessing.Nodes;assembly=Parcel.Toolbox.DataProcessing"
         xmlns:System="clr-namespace:System;assembly=System.Runtime"
         xmlns:dataTypes="clr-namespace:Parcel.Neo.Base.DataTypes;assembly=Parcel.Neo.Base"
-        xmlns:framework="clr-namespace:Parcel.Neo.Base.Framework;assembly=Parcel.Neo.Base"
         xmlns:advanced="clr-namespace:Parcel.Neo.Base.Framework.Advanced;assembly=Parcel.Neo.Base"
         xmlns:nodes1="clr-namespace:Parcel.Toolbox.Math.Nodes;assembly=Parcel.Toolbox.Math"
         xmlns:specialNodes="clr-namespace:Parcel.Toolbox.Special.Nodes;assembly=Parcel.Toolbox.Special"
@@ -317,399 +316,456 @@
             <nodify:NodeOutput/>
         </DataTemplate>
     </Window.Resources>
-    <Grid Background="{StaticResource LargeGridLinesDrawingBrush}">
-        <TextBlock Margin="1" Padding="2" Text="{Binding WebAccessPointUrl}"
-                   HorizontalAlignment="Right" VerticalAlignment="Bottom"
-                   Background="Transparent"
-                   Foreground="#94A8A8A8" FontSize="16" FontWeight="Bold"/>
-        <nodify:NodifyEditor HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                             x:Name="Editor" DisableAutoPanning="True"
-                             Background="{StaticResource SmallGridLinesDrawingBrush}"
-                             ItemsSource="{Binding Canvas.Nodes}"
-                             Connections="{Binding Canvas.Connections}"
-                             PendingConnection="{Binding Canvas.PendingConnection}"
-                             SelectedItems="{Binding Canvas.SelectedNodes}"
-                             DisconnectConnectorCommand="{Binding Canvas.DisconnectConnectorCommand}"
-                             MouseRightButtonUp="Editor_OnMouseRightButtonUp" MouseLeftButtonDown="Editor_OnMouseDoubleClick">
-            <nodify:NodifyEditor.PendingConnectionTemplate>
-                <DataTemplate DataType="{x:Type viewModels:PendingConnection}">
-                    <nodify:PendingConnection Source="{Binding Source, Mode=OneWayToSource}"
-                                              Content="{Binding PreviewText}"
-                                              Target="{Binding PreviewTarget, Mode=OneWayToSource}"
-                                              PreviewTarget="{Binding PreviewTarget, Mode=OneWayToSource}"
-                                              CompletedCommand="{Binding Graph.CreateConnectionCommand}"
-                                              Direction="{Binding Source.FlowType, Converter={StaticResource FlowToDirectionConverter}}"/>
-                </DataTemplate>
-            </nodify:NodifyEditor.PendingConnectionTemplate>
-            <nodify:NodifyEditor.InputBindings>
-                <KeyBinding Key="Delete"
-                            Command="{Binding Canvas.DeleteSelectionCommand}" />
-                
-                <KeyBinding Key="C"
-                            Command="{Binding Canvas.CommentSelectionCommand}" />
-                <KeyBinding Key="R"
-                            Command="{Binding RepeatLastCommand}" />
-                
-                <KeyBinding Key="C" Modifiers="Control"
-                            Command="{Binding CreateCalculatorNodeCommand}" />
-                <KeyBinding Key="N" Modifiers="Control"
-                            Command="{Binding NewCanvasCommand}" />
-                <KeyBinding Key="O" Modifiers="Control"
-                            Command="{Binding OpenCanvasCommand}" />
-                <KeyBinding Key="S" Modifiers="Control"
-                            Command="{Binding SaveCanvasCommand}" />
+    <DockPanel LastChildFill="True">
+        <Menu DockPanel.Dock="Top" Background="#104675">
+            <Menu.Resources>
+                <Style TargetType="MenuItem">
+                    <Setter Property="Foreground" Value="#c0c0c0"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type MenuItem}">
+                                <Border x:Name="MenuItemBorder" Margin="2" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+                                    <Grid VerticalAlignment="Center">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ContentPresenter Content="{TemplateBinding Header}" ContentSource="Header" Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                        <Popup AllowsTransparency="True" IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}" Placement="Bottom" PlacementTarget="{Binding ElementName=MenuItemBorder}"
+                   HorizontalOffset="1" VerticalOffset="-1">
+                                            <Border BorderBrush="#414141" Background="#414141">
+                                                <ScrollViewer Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}">
+                                                    <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                                </ScrollViewer>
+                                            </Border>
+                                        </Popup>
+                                    </Grid>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsHighlighted" Value="True">
+                                        <Setter Property="Background" Value="#1271C8"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Menu.Resources>
+            <MenuItem Header="File">
+                <MenuItem Header="Open..."/>
+                <MenuItem Header="Save"/>
+                <MenuItem Header="Save As..."/>
+                <Separator/>
+                <MenuItem Header="Close"/>
+            </MenuItem>
+            <MenuItem Header="Edit">
+                <MenuItem Header="Select All (Ctrl+A)"/>
+            </MenuItem>
+            <MenuItem Header="Help">
+                <MenuItem Header="Manual"/>
+                <MenuItem Header="Shortcuts"/>
+                <Separator/>
+                <MenuItem Header="About"/>
+            </MenuItem>
+        </Menu>
+        <Grid DockPanel.Dock="Bottom" Background="{StaticResource LargeGridLinesDrawingBrush}">
+            <nodify:NodifyEditor HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                         x:Name="Editor" DisableAutoPanning="True"
+                         Background="{StaticResource SmallGridLinesDrawingBrush}"
+                         ItemsSource="{Binding Canvas.Nodes}"
+                         Connections="{Binding Canvas.Connections}"
+                         PendingConnection="{Binding Canvas.PendingConnection}"
+                         SelectedItems="{Binding Canvas.SelectedNodes}"
+                         DisconnectConnectorCommand="{Binding Canvas.DisconnectConnectorCommand}"
+                         MouseRightButtonUp="Editor_OnMouseRightButtonUp" MouseLeftButtonDown="Editor_OnMouseDoubleClick">
+                <nodify:NodifyEditor.PendingConnectionTemplate>
+                    <DataTemplate DataType="{x:Type viewModels:PendingConnection}">
+                        <nodify:PendingConnection Source="{Binding Source, Mode=OneWayToSource}"
+                                          Content="{Binding PreviewText}"
+                                          Target="{Binding PreviewTarget, Mode=OneWayToSource}"
+                                          PreviewTarget="{Binding PreviewTarget, Mode=OneWayToSource}"
+                                          CompletedCommand="{Binding Graph.CreateConnectionCommand}"
+                                          Direction="{Binding Source.FlowType, Converter={StaticResource FlowToDirectionConverter}}"/>
+                    </DataTemplate>
+                </nodify:NodifyEditor.PendingConnectionTemplate>
+                <nodify:NodifyEditor.InputBindings>
+                    <KeyBinding Key="Delete"
+                        Command="{Binding Canvas.DeleteSelectionCommand}" />
 
-                <KeyBinding Key="F1"
-                            Command="{Binding ShowHelpCommand}" />
-            </nodify:NodifyEditor.InputBindings>
-            <nodify:NodifyEditor.Resources>
-                <!--Custom Styling-->
-                <Style TargetType="{x:Type TextBox}"
-                       BasedOn="{StaticResource {x:Type TextBox}}">
-                    <Setter Property="Background" Value="#333337" />
-                    <Setter Property="BorderBrush" Value="#3F3F3F" />
-                    <Setter Property="Foreground" Value="White" />
-                    <Setter Property="BorderThickness" Value="1" />
-                    <Setter Property="Padding" Value="2 1" />
-                    <Setter Property="Margin" Value="1"></Setter>
-                    <Setter Property="VerticalContentAlignment" Value="Center" />
-                </Style>
-                
-                <!--Node Type Data Templates-->
-                <DataTemplate DataType="{x:Type baseNodes:PrimitiveNode}">
-                    <nodify:Node Header="{Binding Title}"
-                                 Content="{Binding}"
-                                 Input="{Binding Input}"
-                                 Output="{Binding Output}"
-                                 InputConnectorTemplate="{StaticResource PrimitiveNodeInputConnectorTemplate}"
-                                 OutputConnectorTemplate="{StaticResource PrimitiveNodeOutputConnectorTemplate}">
-                        <nodify:Node.Resources>
-                            <DataTemplate DataType="{x:Type baseNodes:PrimitiveNode}">
-                                <TextBox Text="{Binding Value}"
-                                         MinWidth="100" PreviewKeyDown="PrimitiveInputTextbox_OnPreviewKeyDown_CommandOverride"
-                                         Margin="5 0 0 0" />
-                            </DataTemplate>
-                            <DataTemplate DataType="{x:Type primitives:OpenFileNode}">
-                                <DockPanel LastChildFill="True">
-                                    <Button DockPanel.Dock="Right" Content="Open" Click="OpenFileNode_ButtonClick"></Button>
-                                    <TextBox Text="{Binding Path}"
-                                             MinWidth="100" MaxWidth="180" PreviewKeyDown="PrimitiveInputTextbox_OnPreviewKeyDown_CommandOverride"
-                                             Margin="5 0 0 0" />
-                                </DockPanel>
-                            </DataTemplate>
-                            <DataTemplate DataType="{x:Type primitives:SaveFileNode}">
-                                <DockPanel LastChildFill="True">
-                                    <Button DockPanel.Dock="Right" Content="Open" Click="SaveFileNode_ButtonClick"></Button>
-                                    <TextBox Text="{Binding Path}"
-                                             MinWidth="100" MaxWidth="180" PreviewKeyDown="PrimitiveInputTextbox_OnPreviewKeyDown_CommandOverride"
-                                             Margin="5 0 0 0" />
-                                </DockPanel>
-                            </DataTemplate>
-                            <DataTemplate DataType="{x:Type primitives:BooleanNode}">
-                                <CheckBox IsChecked="{Binding Value}"
-                                          MinWidth="100"
-                                          Margin="5 0 0 0" />
-                            </DataTemplate>
-                        </nodify:Node.Resources>
-                    </nodify:Node>
-                </DataTemplate>
-                <DataTemplate DataType="{x:Type baseNodes:ProcessorNode}">
-                    <nodify:Node Header="{Binding Title}"
-                                 Input="{Binding Input}"
-                                 Output="{Binding Output}"
-                                 Content="{Binding}"
-                                 ToolTip="{Binding Tooltip}"
-                                 InputConnectorTemplate="{StaticResource PrimitiveNodeInputConnectorTemplate}"
-                                 OutputConnectorTemplate="{StaticResource PrimitiveNodeOutputConnectorTemplate}">
-                        <nodify:Node.Resources>
-                            <SolidColorBrush Color="MediumPurple" x:Key="PreviewModeBorderColor"></SolidColorBrush>
-                            <Style TargetType="{x:Type nodify:Node}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsPreview}" Value="True">
-                                        <Setter Property="BorderBrush" Value="{StaticResource PreviewModeBorderColor}"/>
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                            
-                            <DataTemplate DataType="{x:Type nodes1:Calculator}">
-                                <TextBox Text="{Binding Value}"
-                                         MinWidth="100" PreviewKeyDown="PrimitiveInputTextbox_OnPreviewKeyDown_CommandOverride"
-                                         Margin="5 0 0 0" />
-                            </DataTemplate>
-                            
-                            <DataTemplate DataType="{x:Type nodes1:Expression}">
-                                <DockPanel LastChildFill="True">
+                    <KeyBinding Key="C"
+                        Command="{Binding Canvas.CommentSelectionCommand}" />
+                    <KeyBinding Key="R"
+                        Command="{Binding RepeatLastCommand}" />
+
+                    <KeyBinding Key="C" Modifiers="Control"
+                        Command="{Binding CreateCalculatorNodeCommand}" />
+                    <KeyBinding Key="N" Modifiers="Control"
+                        Command="{Binding NewCanvasCommand}" />
+                    <KeyBinding Key="O" Modifiers="Control"
+                        Command="{Binding OpenCanvasCommand}" />
+                    <KeyBinding Key="S" Modifiers="Control"
+                        Command="{Binding SaveCanvasCommand}" />
+
+                    <KeyBinding Key="F1"
+                        Command="{Binding ShowHelpCommand}" />
+                </nodify:NodifyEditor.InputBindings>
+                <nodify:NodifyEditor.Resources>
+                    <!--Custom Styling-->
+                    <Style TargetType="{x:Type TextBox}"
+                   BasedOn="{StaticResource {x:Type TextBox}}">
+                        <Setter Property="Background" Value="#333337" />
+                        <Setter Property="BorderBrush" Value="#3F3F3F" />
+                        <Setter Property="Foreground" Value="White" />
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="Padding" Value="2 1" />
+                        <Setter Property="Margin" Value="1"></Setter>
+                        <Setter Property="VerticalContentAlignment" Value="Center" />
+                    </Style>
+
+                    <!--Node Type Data Templates-->
+                    <DataTemplate DataType="{x:Type baseNodes:PrimitiveNode}">
+                        <nodify:Node Header="{Binding Title}"
+                             Content="{Binding}"
+                             Input="{Binding Input}"
+                             Output="{Binding Output}"
+                             InputConnectorTemplate="{StaticResource PrimitiveNodeInputConnectorTemplate}"
+                             OutputConnectorTemplate="{StaticResource PrimitiveNodeOutputConnectorTemplate}">
+                            <nodify:Node.Resources>
+                                <DataTemplate DataType="{x:Type baseNodes:PrimitiveNode}">
                                     <TextBox Text="{Binding Value}"
-                                             MinWidth="100" PreviewKeyDown="PrimitiveInputTextbox_OnPreviewKeyDown_CommandOverride"
-                                             Margin="5 0 0 0" DockPanel.Dock="Top" />
-                                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-                                        <Button Style="{StaticResource IconButton}"
-                                                Content="{StaticResource PlusIcon}"
-                                                Command="{Binding AddEntryCommand}" />
-                                        <Button Style="{StaticResource IconButton}"
-                                                Content="{StaticResource RemoveKeyIcon}"
-                                                Command="{Binding RemoveEntryCommand}" />
-                                        <TextBlock Foreground="{Binding Message.Type, Converter={StaticResource NodeMessageTypeToBrushColorConverter}}" 
-                                                   Margin="0" Padding="0" 
-                                                   MaxWidth="256" TextWrapping="WrapWithOverflow"
-                                                   Text="{Binding Message.Content}"
-                                                   Visibility="{Binding Message.Type, Converter={StaticResource NodeMessageTypeToVisibilityConverter}}">
-                                        </TextBlock>
-                                    </StackPanel>
-                                </DockPanel>
-                            </DataTemplate>
-                            
-                            <DataTemplate DataType="{x:Type advanced:GraphInputOutputNodeBase}">
-                                <DataTemplate.Resources>
-                                    <Style TargetType="TextBox">
-                                        <Setter Property="VerticalAlignment" Value="Center"></Setter>
-                                    </Style>
-                                </DataTemplate.Resources>
-                                <DockPanel LastChildFill="True">
-                                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-                                        <Button Style="{StaticResource IconButton}"
-                                                Content="{StaticResource PlusIcon}"
-                                                Command="{Binding AddEntryCommand}" />
-                                        <Button Style="{StaticResource IconButton}"
-                                                Content="{StaticResource RemoveKeyIcon}"
-                                                Command="{Binding RemoveEntryCommand}" />
-                                    </StackPanel>
-                                    <ListView ItemsSource="{Binding Definitions}">
-                                        <ListView.ItemContainerStyle>
-                                            <Style TargetType="ListViewItem">
-                                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                            </Style>
-                                        </ListView.ItemContainerStyle>
-                                        <ListView.ItemTemplate>
-                                            <DataTemplate DataType="{x:Type advanced:GraphInputOutputDefinition}">
-                                                <DockPanel LastChildFill="True" MinWidth="150">
-                                                    <TextBox Text="{Binding Name}" PreviewKeyDown="PrimitiveInputTextbox_OnPreviewKeyDown_CommandOverride"></TextBox>
-                                                    <ComboBox ItemsSource="{Binding Source={StaticResource CacheDataTypeEntriesFromEnum}}"
-                                                              SelectedItem="{Binding Type}"></ComboBox>
-                                                </DockPanel>
-                                            </DataTemplate>
-                                        </ListView.ItemTemplate>
-                                    </ListView>
-                                </DockPanel>
-                            </DataTemplate>
-                            
-                            <DataTemplate DataType="{x:Type nodes:Dictionary}">
-                                <DataTemplate.Resources>
-                                    <Style TargetType="TextBox">
-                                        <Setter Property="VerticalAlignment" Value="Center"></Setter>
-                                    </Style>
-                                </DataTemplate.Resources>
-                                <DockPanel LastChildFill="True">
-                                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-                                        <Button Style="{StaticResource IconButton}"
-                                                Content="{StaticResource PlusIcon}"
-                                                Command="{Binding AddEntryCommand}" />
-                                        <Button Style="{StaticResource IconButton}"
-                                                Content="{StaticResource RemoveKeyIcon}"
-                                                Command="{Binding RemoveEntryCommand}" />
-                                    </StackPanel>
-                                    <ListView ItemsSource="{Binding Definitions}">
-                                        <ListView.ItemContainerStyle>
-                                            <Style TargetType="ListViewItem">
-                                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                            </Style>
-                                        </ListView.ItemContainerStyle>
-                                        <ListView.ItemTemplate>
-                                            <DataTemplate DataType="{x:Type nodes:DictionaryEntryDefinition}">
-                                                <DockPanel LastChildFill="True" MinWidth="150">
-                                                    <TextBox Text="{Binding Name}" PreviewKeyDown="PrimitiveInputTextbox_OnPreviewKeyDown_CommandOverride"></TextBox>
-                                                    <ComboBox ItemsSource="{Binding Source={StaticResource DictionaryEntryTypeEntriesFromEnum}}"
-                                                              SelectedItem="{Binding Type}"></ComboBox>
-                                                    <TextBox Text="{Binding Value}" PreviewKeyDown="PrimitiveInputTextbox_OnPreviewKeyDown_CommandOverride"></TextBox>
-                                                </DockPanel>
-                                            </DataTemplate>
-                                        </ListView.ItemTemplate>
-                                    </ListView>
-                                </DockPanel>
-                            </DataTemplate>
-                            
-                            <DataTemplate DataType="{x:Type nodes:DataTable}">
-                                <DataTemplate.Resources>
-                                    <Style TargetType="TextBox">
-                                        <Setter Property="VerticalAlignment" Value="Center"></Setter>
-                                    </Style>
-                                </DataTemplate.Resources>
-                                <DockPanel LastChildFill="True">
-                                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-                                        <Button Style="{StaticResource IconButton}"
-                                                Content="{StaticResource PlusIcon}"
-                                                Command="{Binding AddEntryCommand}" />
-                                        <Button Style="{StaticResource IconButton}"
-                                                Content="{StaticResource RemoveKeyIcon}"
-                                                Command="{Binding RemoveEntryCommand}" />
-                                    </StackPanel>
-                                    <ListView ItemsSource="{Binding Definitions}">
-                                        <ListView.ItemContainerStyle>
-                                            <Style TargetType="ListViewItem">
-                                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                                            </Style>
-                                        </ListView.ItemContainerStyle>
-                                        <ListView.ItemTemplate>
-                                            <DataTemplate DataType="{x:Type nodes:DataTableFieldDefinition}">
-                                                <DockPanel LastChildFill="True" MinWidth="150">
-                                                    <TextBox Text="{Binding Name}" PreviewKeyDown="PrimitiveInputTextbox_OnPreviewKeyDown_CommandOverride"></TextBox>
-                                                    <ComboBox ItemsSource="{Binding Source={StaticResource DictionaryEntryTypeEntriesFromEnum}}"
-                                                              SelectedItem="{Binding Type}"></ComboBox>
-                                                </DockPanel>
-                                            </DataTemplate>
-                                        </ListView.ItemTemplate>
-                                    </ListView>
-                                </DockPanel>
-                            </DataTemplate>
-                            
-                            <DataTemplate DataType="{x:Type baseNodes:DynamicInputProcessorNode}">
-                                <DockPanel LastChildFill="True">
-                                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-                                        <Button Style="{StaticResource IconButton}"
-                                                Content="{StaticResource PlusIcon}"
-                                                Command="{Binding AddEntryCommand}" />
-                                        <Button Style="{StaticResource IconButton}"
-                                                Content="{StaticResource RemoveKeyIcon}"
-                                                Command="{Binding RemoveEntryCommand}" />
-                                        <TextBlock Foreground="{Binding Message.Type, Converter={StaticResource NodeMessageTypeToBrushColorConverter}}" 
-                                                   Margin="0" Padding="0" 
-                                                   MaxWidth="256" TextWrapping="WrapWithOverflow"
-                                                   Text="{Binding Message.Content}"
-                                                   Visibility="{Binding Message.Type, Converter={StaticResource NodeMessageTypeToVisibilityConverter}}">
-                                        </TextBlock>
-                                    </StackPanel>
-                                </DockPanel>
-                            </DataTemplate>
-                            
-                            <DataTemplate DataType="{x:Type baseNodes:ProcessorNode}">
-                                <TextBlock Foreground="{Binding Message.Type, Converter={StaticResource NodeMessageTypeToBrushColorConverter}}" 
-                                           Margin="0" Padding="0" 
-                                           MaxWidth="256" TextWrapping="WrapWithOverflow"
-                                           Text="{Binding Message.Content}"
-                                           Visibility="{Binding Message.Type, Converter={StaticResource NodeMessageTypeToVisibilityConverter}}">
-                                </TextBlock>
-                            </DataTemplate>
-                        </nodify:Node.Resources>
-                        <nodify:Node.HeaderTemplate>
-                            <DataTemplate><!--The data type here is just a string-->
-                                <DockPanel LastChildFill="True" HorizontalAlignment="Stretch">
-                                    <StackPanel DockPanel.Dock="Right" Margin="0" Orientation="Horizontal" VerticalAlignment="Center">
-                                        <Border Margin="5, 0, 0, 0" Padding="0" Width="10" Height="10" CornerRadius="5"
-                                                BorderThickness="2" BorderBrush="{StaticResource PreviewModeBorderColor}" 
-                                                MouseDown="ProcessorNodeTogglePreviewButton_MouseDown"
-                                                Tag="{Binding Path=DataContext, 
-                                                    RelativeSource={RelativeSource AncestorType={x:Type nodify:Node},Mode=FindAncestor}}"
-                                                DataContext="{Binding Path=DataContext, 
-                                                    RelativeSource={RelativeSource AncestorType={x:Type nodify:Node},Mode=FindAncestor}}">
-                                            <Border.Resources>
-                                                <Style TargetType="{x:Type Border}">
-                                                    <Setter Property="Background" Value="Transparent"></Setter>
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsPreview}" Value="True">
-                                                            <Setter Property="Background" Value="{StaticResource PreviewModeBorderColor}"></Setter>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
+                                     MinWidth="100" PreviewKeyDown="PrimitiveInputTextbox_OnPreviewKeyDown_CommandOverride"
+                                     Margin="5 0 0 0" />
+                                </DataTemplate>
+                                <DataTemplate DataType="{x:Type primitives:OpenFileNode}">
+                                    <DockPanel LastChildFill="True">
+                                        <Button DockPanel.Dock="Right" Content="Open" Click="OpenFileNode_ButtonClick"></Button>
+                                        <TextBox Text="{Binding Path}"
+                                         MinWidth="100" MaxWidth="180" PreviewKeyDown="PrimitiveInputTextbox_OnPreviewKeyDown_CommandOverride"
+                                         Margin="5 0 0 0" />
+                                    </DockPanel>
+                                </DataTemplate>
+                                <DataTemplate DataType="{x:Type primitives:SaveFileNode}">
+                                    <DockPanel LastChildFill="True">
+                                        <Button DockPanel.Dock="Right" Content="Open" Click="SaveFileNode_ButtonClick"></Button>
+                                        <TextBox Text="{Binding Path}"
+                                         MinWidth="100" MaxWidth="180" PreviewKeyDown="PrimitiveInputTextbox_OnPreviewKeyDown_CommandOverride"
+                                         Margin="5 0 0 0" />
+                                    </DockPanel>
+                                </DataTemplate>
+                                <DataTemplate DataType="{x:Type primitives:BooleanNode}">
+                                    <CheckBox IsChecked="{Binding Value}"
+                                      MinWidth="100"
+                                      Margin="5 0 0 0" />
+                                </DataTemplate>
+                            </nodify:Node.Resources>
+                        </nodify:Node>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type baseNodes:ProcessorNode}">
+                        <nodify:Node Header="{Binding Title}"
+                             Input="{Binding Input}"
+                             Output="{Binding Output}"
+                             Content="{Binding}"
+                             ToolTip="{Binding Tooltip}"
+                             InputConnectorTemplate="{StaticResource PrimitiveNodeInputConnectorTemplate}"
+                             OutputConnectorTemplate="{StaticResource PrimitiveNodeOutputConnectorTemplate}">
+                            <nodify:Node.Resources>
+                                <SolidColorBrush Color="MediumPurple" x:Key="PreviewModeBorderColor"></SolidColorBrush>
+                                <Style TargetType="{x:Type nodify:Node}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPreview}" Value="True">
+                                            <Setter Property="BorderBrush" Value="{StaticResource PreviewModeBorderColor}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+
+                                <DataTemplate DataType="{x:Type nodes1:Calculator}">
+                                    <TextBox Text="{Binding Value}"
+                                     MinWidth="100" PreviewKeyDown="PrimitiveInputTextbox_OnPreviewKeyDown_CommandOverride"
+                                     Margin="5 0 0 0" />
+                                </DataTemplate>
+
+                                <DataTemplate DataType="{x:Type nodes1:Expression}">
+                                    <DockPanel LastChildFill="True">
+                                        <TextBox Text="{Binding Value}"
+                                         MinWidth="100" PreviewKeyDown="PrimitiveInputTextbox_OnPreviewKeyDown_CommandOverride"
+                                         Margin="5 0 0 0" DockPanel.Dock="Top" />
+                                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                                            <Button Style="{StaticResource IconButton}"
+                                            Content="{StaticResource PlusIcon}"
+                                            Command="{Binding AddEntryCommand}" />
+                                            <Button Style="{StaticResource IconButton}"
+                                            Content="{StaticResource RemoveKeyIcon}"
+                                            Command="{Binding RemoveEntryCommand}" />
+                                            <TextBlock Foreground="{Binding Message.Type, Converter={StaticResource NodeMessageTypeToBrushColorConverter}}" 
+                                               Margin="0" Padding="0" 
+                                               MaxWidth="256" TextWrapping="WrapWithOverflow"
+                                               Text="{Binding Message.Content}"
+                                               Visibility="{Binding Message.Type, Converter={StaticResource NodeMessageTypeToVisibilityConverter}}">
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </DockPanel>
+                                </DataTemplate>
+
+                                <DataTemplate DataType="{x:Type advanced:GraphInputOutputNodeBase}">
+                                    <DataTemplate.Resources>
+                                        <Style TargetType="TextBox">
+                                            <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                                        </Style>
+                                    </DataTemplate.Resources>
+                                    <DockPanel LastChildFill="True">
+                                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                                            <Button Style="{StaticResource IconButton}"
+                                            Content="{StaticResource PlusIcon}"
+                                            Command="{Binding AddEntryCommand}" />
+                                            <Button Style="{StaticResource IconButton}"
+                                            Content="{StaticResource RemoveKeyIcon}"
+                                            Command="{Binding RemoveEntryCommand}" />
+                                        </StackPanel>
+                                        <ListView ItemsSource="{Binding Definitions}">
+                                            <ListView.ItemContainerStyle>
+                                                <Style TargetType="ListViewItem">
+                                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                                                 </Style>
-                                            </Border.Resources>
-                                        </Border>
-                                        <Button Content="Preview" 
-                                                Click="ProcessorNodePreviewButton_Click"
-                                                Tag="{Binding Path=DataContext, 
-                                                    RelativeSource={RelativeSource AncestorType={x:Type nodify:Node},Mode=FindAncestor}}">
-                                            <Button.Resources>
-                                                <!--Custom Styling-->
-                                                <Style TargetType="{x:Type Button}">
-                                                    <Setter Property="Background" Value="Transparent"/>
-                                                    <Setter Property="BorderBrush" Value="#272727"/>
-                                                    <Setter Property="Foreground" Value="DarkGray"/>
-                                                    <Setter Property="Margin" Value="2,0"/>
-                                                    <Setter Property="Padding" Value="2, 1"/>
-                                                    <Setter Property="VerticalAlignment" Value="Center"/>
-                                                    <Setter Property="FontSize" Value="10"></Setter>
-                                                    <Setter Property="Template">
-                                                        <Setter.Value>
-                                                            <ControlTemplate TargetType="{x:Type Button}">
-                                                                <Border Background="{TemplateBinding Background}"
-                                                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                                                        Margin="{TemplateBinding Margin}"
-                                                                        Padding="{TemplateBinding Padding}"
-                                                                        VerticalAlignment="{TemplateBinding VerticalAlignment}">
-                                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                                </Border>
-                                                            </ControlTemplate>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                    <Style.Triggers>
-                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter Property="Background" Value="SlateGray"/>
-                                                        </Trigger>
-                                                    </Style.Triggers>
+                                            </ListView.ItemContainerStyle>
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type advanced:GraphInputOutputDefinition}">
+                                                    <DockPanel LastChildFill="True" MinWidth="150">
+                                                        <TextBox Text="{Binding Name}" PreviewKeyDown="PrimitiveInputTextbox_OnPreviewKeyDown_CommandOverride"></TextBox>
+                                                        <ComboBox ItemsSource="{Binding Source={StaticResource CacheDataTypeEntriesFromEnum}}"
+                                                          SelectedItem="{Binding Type}"></ComboBox>
+                                                    </DockPanel>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
+                                    </DockPanel>
+                                </DataTemplate>
+
+                                <DataTemplate DataType="{x:Type nodes:Dictionary}">
+                                    <DataTemplate.Resources>
+                                        <Style TargetType="TextBox">
+                                            <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                                        </Style>
+                                    </DataTemplate.Resources>
+                                    <DockPanel LastChildFill="True">
+                                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                                            <Button Style="{StaticResource IconButton}"
+                                            Content="{StaticResource PlusIcon}"
+                                            Command="{Binding AddEntryCommand}" />
+                                            <Button Style="{StaticResource IconButton}"
+                                            Content="{StaticResource RemoveKeyIcon}"
+                                            Command="{Binding RemoveEntryCommand}" />
+                                        </StackPanel>
+                                        <ListView ItemsSource="{Binding Definitions}">
+                                            <ListView.ItemContainerStyle>
+                                                <Style TargetType="ListViewItem">
+                                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                                                 </Style>
-                                                <Style TargetType="Border">
-                                                    <Setter Property="CornerRadius" Value="4"/>
+                                            </ListView.ItemContainerStyle>
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type nodes:DictionaryEntryDefinition}">
+                                                    <DockPanel LastChildFill="True" MinWidth="150">
+                                                        <TextBox Text="{Binding Name}" PreviewKeyDown="PrimitiveInputTextbox_OnPreviewKeyDown_CommandOverride"></TextBox>
+                                                        <ComboBox ItemsSource="{Binding Source={StaticResource DictionaryEntryTypeEntriesFromEnum}}"
+                                                          SelectedItem="{Binding Type}"></ComboBox>
+                                                        <TextBox Text="{Binding Value}" PreviewKeyDown="PrimitiveInputTextbox_OnPreviewKeyDown_CommandOverride"></TextBox>
+                                                    </DockPanel>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
+                                    </DockPanel>
+                                </DataTemplate>
+
+                                <DataTemplate DataType="{x:Type nodes:DataTable}">
+                                    <DataTemplate.Resources>
+                                        <Style TargetType="TextBox">
+                                            <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                                        </Style>
+                                    </DataTemplate.Resources>
+                                    <DockPanel LastChildFill="True">
+                                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                                            <Button Style="{StaticResource IconButton}"
+                                            Content="{StaticResource PlusIcon}"
+                                            Command="{Binding AddEntryCommand}" />
+                                            <Button Style="{StaticResource IconButton}"
+                                            Content="{StaticResource RemoveKeyIcon}"
+                                            Command="{Binding RemoveEntryCommand}" />
+                                        </StackPanel>
+                                        <ListView ItemsSource="{Binding Definitions}">
+                                            <ListView.ItemContainerStyle>
+                                                <Style TargetType="ListViewItem">
+                                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                                                 </Style>
-                                            </Button.Resources>
-                                        </Button>
-                                    </StackPanel>
-                                    <Label Content="{Binding }" 
-                                           Foreground="White" Margin="0" Padding="0"
-                                           VerticalAlignment="Center"/>
-                                </DockPanel>
-                            </DataTemplate>
-                        </nodify:Node.HeaderTemplate>
-                    </nodify:Node>
-                </DataTemplate>
-                <DataTemplate DataType="{x:Type baseNodes:CommentNode}">
-                    <nodify:GroupingNode Header="{Binding Title}"
-                                         Content="{Binding Comment}"
-                                         ActualSize="{Binding Size}" />
-                </DataTemplate>
-                <DataTemplate DataType="{x:Type baseNodes:KnotNode}">
-                    <nodify:KnotNode Content="{Binding Connector}"/>
-                </DataTemplate>
-                <!--Special Nodes-->
-                <DataTemplate DataType="{x:Type specialNodes:GraphStats}">
-                    <nodify:Node Header="{Binding Title}"
-                                 Content="{Binding}"
-                                 Input="{Binding Input}"
-                                 Output="{Binding Output}"
-                                 InputConnectorTemplate="{StaticResource PrimitiveNodeInputConnectorTemplate}"
-                                 OutputConnectorTemplate="{StaticResource PrimitiveNodeOutputConnectorTemplate}">
-                        <nodify:Node.ContentTemplate>
-                            <DataTemplate DataType="{x:Type specialNodes:GraphStats}">
-                                <DataTemplate.Resources>
-                                    <Style TargetType="Label">
-                                        <Setter Property="Foreground" Value="White"></Setter>
-                                    </Style>
-                                </DataTemplate.Resources>
-                                <DockPanel LastChildFill="True">
-                                    <StackPanel Orientation="Horizontal">
-                                        <Label Content="Nodes: "></Label>
-                                        <Label Content="{Binding Graph.Nodes.Count}"></Label>
-                                        <Label Content="(Including comments and all nodes)"></Label>
-                                    </StackPanel>
-                                </DockPanel>
-                            </DataTemplate>
-                        </nodify:Node.ContentTemplate>
-                    </nodify:Node>
-                </DataTemplate>
-            </nodify:NodifyEditor.Resources>
-            <nodify:NodifyEditor.ConnectionTemplate>
-                <DataTemplate DataType="{x:Type viewModels:BaseConnection}">
-                    <nodify:CircuitConnection Source="{Binding Input.Anchor, Converter={StaticResource NodeLocationConverter}}"
-                                              Target="{Binding Output.Anchor, Converter={StaticResource NodeLocationConverter}}" 
-                                              SourceOffset="10 0"
-                                              TargetOffset="20 0"
-                                              OffsetMode="Circle"
-                                              Style="{StaticResource ConnectionStyle}"/>
-                </DataTemplate>
-            </nodify:NodifyEditor.ConnectionTemplate>
-            <nodify:NodifyEditor.ItemContainerStyle>
-                <Style TargetType="{x:Type nodify:ItemContainer}">
-                    <Setter Property="Location"
-                            Value="{Binding Location, Converter={StaticResource NodeLocationConverter}}" />
-                </Style>
-            </nodify:NodifyEditor.ItemContainerStyle>
-        </nodify:NodifyEditor>
-    </Grid>
+                                            </ListView.ItemContainerStyle>
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate DataType="{x:Type nodes:DataTableFieldDefinition}">
+                                                    <DockPanel LastChildFill="True" MinWidth="150">
+                                                        <TextBox Text="{Binding Name}" PreviewKeyDown="PrimitiveInputTextbox_OnPreviewKeyDown_CommandOverride"></TextBox>
+                                                        <ComboBox ItemsSource="{Binding Source={StaticResource DictionaryEntryTypeEntriesFromEnum}}"
+                                                          SelectedItem="{Binding Type}"></ComboBox>
+                                                    </DockPanel>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
+                                    </DockPanel>
+                                </DataTemplate>
+
+                                <DataTemplate DataType="{x:Type baseNodes:DynamicInputProcessorNode}">
+                                    <DockPanel LastChildFill="True">
+                                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+                                            <Button Style="{StaticResource IconButton}"
+                                            Content="{StaticResource PlusIcon}"
+                                            Command="{Binding AddEntryCommand}" />
+                                            <Button Style="{StaticResource IconButton}"
+                                            Content="{StaticResource RemoveKeyIcon}"
+                                            Command="{Binding RemoveEntryCommand}" />
+                                            <TextBlock Foreground="{Binding Message.Type, Converter={StaticResource NodeMessageTypeToBrushColorConverter}}" 
+                                               Margin="0" Padding="0" 
+                                               MaxWidth="256" TextWrapping="WrapWithOverflow"
+                                               Text="{Binding Message.Content}"
+                                               Visibility="{Binding Message.Type, Converter={StaticResource NodeMessageTypeToVisibilityConverter}}">
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </DockPanel>
+                                </DataTemplate>
+
+                                <DataTemplate DataType="{x:Type baseNodes:ProcessorNode}">
+                                    <TextBlock Foreground="{Binding Message.Type, Converter={StaticResource NodeMessageTypeToBrushColorConverter}}" 
+                                       Margin="0" Padding="0" 
+                                       MaxWidth="256" TextWrapping="WrapWithOverflow"
+                                       Text="{Binding Message.Content}"
+                                       Visibility="{Binding Message.Type, Converter={StaticResource NodeMessageTypeToVisibilityConverter}}">
+                                    </TextBlock>
+                                </DataTemplate>
+                            </nodify:Node.Resources>
+                            <nodify:Node.HeaderTemplate>
+                                <DataTemplate>
+                                    <!--The data type here is just a string-->
+                                    <DockPanel LastChildFill="True" HorizontalAlignment="Stretch">
+                                        <StackPanel DockPanel.Dock="Right" Margin="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Border Margin="5, 0, 0, 0" Padding="0" Width="10" Height="10" CornerRadius="5"
+                                            BorderThickness="2" BorderBrush="{StaticResource PreviewModeBorderColor}" 
+                                            MouseDown="ProcessorNodeTogglePreviewButton_MouseDown"
+                                            Tag="{Binding Path=DataContext, 
+                                                RelativeSource={RelativeSource AncestorType={x:Type nodify:Node},Mode=FindAncestor}}"
+                                            DataContext="{Binding Path=DataContext, 
+                                                RelativeSource={RelativeSource AncestorType={x:Type nodify:Node},Mode=FindAncestor}}">
+                                                <Border.Resources>
+                                                    <Style TargetType="{x:Type Border}">
+                                                        <Setter Property="Background" Value="Transparent"></Setter>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsPreview}" Value="True">
+                                                                <Setter Property="Background" Value="{StaticResource PreviewModeBorderColor}"></Setter>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Resources>
+                                            </Border>
+                                            <Button Content="Preview" 
+                                            Click="ProcessorNodePreviewButton_Click"
+                                            Tag="{Binding Path=DataContext, 
+                                                RelativeSource={RelativeSource AncestorType={x:Type nodify:Node},Mode=FindAncestor}}">
+                                                <Button.Resources>
+                                                    <!--Custom Styling-->
+                                                    <Style TargetType="{x:Type Button}">
+                                                        <Setter Property="Background" Value="Transparent"/>
+                                                        <Setter Property="BorderBrush" Value="#272727"/>
+                                                        <Setter Property="Foreground" Value="DarkGray"/>
+                                                        <Setter Property="Margin" Value="2,0"/>
+                                                        <Setter Property="Padding" Value="2, 1"/>
+                                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                                        <Setter Property="FontSize" Value="10"></Setter>
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="{x:Type Button}">
+                                                                    <Border Background="{TemplateBinding Background}"
+                                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                                    Margin="{TemplateBinding Margin}"
+                                                                    Padding="{TemplateBinding Padding}"
+                                                                    VerticalAlignment="{TemplateBinding VerticalAlignment}">
+                                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                    </Border>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                        <Style.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter Property="Background" Value="SlateGray"/>
+                                                            </Trigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="CornerRadius" Value="4"/>
+                                                    </Style>
+                                                </Button.Resources>
+                                            </Button>
+                                        </StackPanel>
+                                        <Label Content="{Binding }" 
+                                       Foreground="White" Margin="0" Padding="0"
+                                       VerticalAlignment="Center"/>
+                                    </DockPanel>
+                                </DataTemplate>
+                            </nodify:Node.HeaderTemplate>
+                        </nodify:Node>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type baseNodes:CommentNode}">
+                        <nodify:GroupingNode Header="{Binding Title}"
+                                     Content="{Binding Comment}"
+                                     ActualSize="{Binding Size}" />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type baseNodes:KnotNode}">
+                        <nodify:KnotNode Content="{Binding Connector}"/>
+                    </DataTemplate>
+                    <!--Special Nodes-->
+                    <DataTemplate DataType="{x:Type specialNodes:GraphStats}">
+                        <nodify:Node Header="{Binding Title}"
+                             Content="{Binding}"
+                             Input="{Binding Input}"
+                             Output="{Binding Output}"
+                             InputConnectorTemplate="{StaticResource PrimitiveNodeInputConnectorTemplate}"
+                             OutputConnectorTemplate="{StaticResource PrimitiveNodeOutputConnectorTemplate}">
+                            <nodify:Node.ContentTemplate>
+                                <DataTemplate DataType="{x:Type specialNodes:GraphStats}">
+                                    <DataTemplate.Resources>
+                                        <Style TargetType="Label">
+                                            <Setter Property="Foreground" Value="White"></Setter>
+                                        </Style>
+                                    </DataTemplate.Resources>
+                                    <DockPanel LastChildFill="True">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label Content="Nodes: "></Label>
+                                            <Label Content="{Binding Graph.Nodes.Count}"></Label>
+                                            <Label Content="(Including comments and all nodes)"></Label>
+                                        </StackPanel>
+                                    </DockPanel>
+                                </DataTemplate>
+                            </nodify:Node.ContentTemplate>
+                        </nodify:Node>
+                    </DataTemplate>
+                </nodify:NodifyEditor.Resources>
+                <nodify:NodifyEditor.ConnectionTemplate>
+                    <DataTemplate DataType="{x:Type viewModels:BaseConnection}">
+                        <nodify:CircuitConnection Source="{Binding Input.Anchor, Converter={StaticResource NodeLocationConverter}}"
+                                          Target="{Binding Output.Anchor, Converter={StaticResource NodeLocationConverter}}" 
+                                          SourceOffset="10 0"
+                                          TargetOffset="20 0"
+                                          OffsetMode="Circle"
+                                          Style="{StaticResource ConnectionStyle}"/>
+                    </DataTemplate>
+                </nodify:NodifyEditor.ConnectionTemplate>
+                <nodify:NodifyEditor.ItemContainerStyle>
+                    <Style TargetType="{x:Type nodify:ItemContainer}">
+                        <Setter Property="Location"
+                        Value="{Binding Location, Converter={StaticResource NodeLocationConverter}}" />
+                    </Style>
+                </nodify:NodifyEditor.ItemContainerStyle>
+            </nodify:NodifyEditor>
+            <StackPanel Margin="4" Orientation="Vertical"
+        HorizontalAlignment="Right" VerticalAlignment="Bottom"
+        Background="Transparent">
+                <Label Margin="0" Padding="0" Foreground="#34A8A8A8" FontFamily="Arial" FontSize="16" FontWeight="Bold" Content="Beta Test" HorizontalAlignment="Center"/>
+                <Label Margin="0" Padding="0" Foreground="#34A8A8A8" FontFamily="Arial" FontSize="8" FontStyle="Italic" Content="Autumn 2024" HorizontalAlignment="Center"/>
+                <Label Margin="0" Padding="0" Foreground="#44A8A8A8" FontFamily="Arial" FontSize="8" Content="This version is not production ready." HorizontalAlignment="Right"/>
+            </StackPanel>
+        </Grid>
+    </DockPanel>
 </local:BaseWindow>
