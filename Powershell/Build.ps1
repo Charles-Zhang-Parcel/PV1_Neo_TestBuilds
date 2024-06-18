@@ -6,7 +6,7 @@ Set-Location $PSScriptRoot
 
 $PublishFolder = "$PSScriptRoot\..\Publish"
 # Delete current data
-if ($Args[0] -ne '--incremental') {
+if (Test-Path -Path $PublishFolder) {
     Remove-Item $PublishFolder -Recurse -Force
 }
 
@@ -26,13 +26,11 @@ if (-Not (Test-Path $pureExePath)) {
 }
 
 # Create archive
-if ($Args[0] -ne '--incremental') {
-    $Date = Get-Date -Format yyyyMMdd
-    $ArchiveFolder = "$PublishFolder\..\Packages"
-    $ArchivePath = "$ArchiveFolder\PV1_Neo_DistributionBuild_B$Date.zip"
-    New-Item -ItemType Directory -Force -Path $ArchiveFolder
-    Compress-Archive -Path $PublishFolder\* -DestinationPath $ArchivePath -Force
-}
+$Date = Get-Date -Format yyyyMMdd
+$ArchiveFolder = "$PublishFolder\..\Packages"
+$ArchivePath = "$ArchiveFolder\PV1_Neo_DistributionBuild_B$Date.zip"
+New-Item -ItemType Directory -Force -Path $ArchiveFolder
+Compress-Archive -Path $PublishFolder\* -DestinationPath $ArchivePath -Force
 
 # Recover pwd
 Set-Location $PrevPath
