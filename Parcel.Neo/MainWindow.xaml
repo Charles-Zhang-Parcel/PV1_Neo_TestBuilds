@@ -16,7 +16,7 @@
         xmlns:nodes1="clr-namespace:Parcel.Toolbox.Math.Nodes;assembly=Parcel.Toolbox.Math"
         xmlns:specialNodes="clr-namespace:Parcel.Toolbox.Special.Nodes;assembly=Parcel.Toolbox.Special"
         mc:Ignorable="d"
-        Title="{Binding DynamicTitle}" Height="450" Width="800"
+        Title="{Binding DynamicTitle}" Height="700" Width="1024"
         Background="#1E1E1E"
         DataContext="{Binding RelativeSource={RelativeSource self}}"
         PreviewKeyDown="MainWindow_OnPreviewKeyDown">
@@ -355,7 +355,7 @@
                 <MenuItem Header="Open..."/>
                 <MenuItem Header="Save"/>
                 <MenuItem Header="Save As..."/>
-                <Separator/>
+                <Separator HorizontalAlignment="Stretch"/>
                 <MenuItem Header="Close"/>
             </MenuItem>
             <MenuItem Header="Edit">
@@ -364,8 +364,8 @@
             <MenuItem Header="Help">
                 <MenuItem Header="Manual"/>
                 <MenuItem Header="Shortcuts"/>
-                <Separator/>
-                <MenuItem Header="About"/>
+                <Separator HorizontalAlignment="Stretch"/>
+                <MenuItem Header="About" Click="AboutMenuItem_Click"/>
             </MenuItem>
         </Menu>
         <Grid DockPanel.Dock="Bottom" Background="{StaticResource LargeGridLinesDrawingBrush}">

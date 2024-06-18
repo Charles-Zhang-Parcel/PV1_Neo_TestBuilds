@@ -13,6 +13,7 @@ using Parcel.Neo.Base.Framework;
 using Parcel.Neo.Base.Framework.ViewModels;
 using Parcel.Neo.Base.Framework.ViewModels.BaseNodes;
 using Parcel.Neo.Base.Framework.ViewModels.Primitives;
+using Parcel.Neo.PopupWindows;
 using Parcel.Toolbox.Basic.Nodes;
 using Parcel.Toolbox.DataProcessing.Nodes;
 using Parcel.Toolbox.FileSystem.Nodes;
@@ -250,6 +251,13 @@ namespace Parcel.Neo
                 
                 e.Handled = true;
             }
+        }
+        private void AboutMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            new AboutWindow()
+            {
+                Owner = this
+            }.ShowDialog();
         }
         #endregion
 
