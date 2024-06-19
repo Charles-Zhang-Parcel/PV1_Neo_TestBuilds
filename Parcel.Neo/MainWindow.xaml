@@ -324,15 +324,14 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type MenuItem}">
-                                <Border x:Name="MenuItemBorder" Margin="2" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+                                <Border x:Name="MenuItemBorder" Margin="1" Padding="2" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
                                     <Grid VerticalAlignment="Center">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
                                         <ContentPresenter Content="{TemplateBinding Header}" ContentSource="Header" Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-                                        <Popup AllowsTransparency="True" IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}" Placement="Bottom" PlacementTarget="{Binding ElementName=MenuItemBorder}"
-                   HorizontalOffset="1" VerticalOffset="-1">
+                                        <Popup AllowsTransparency="True" IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}" Placement="Bottom" PlacementTarget="{Binding ElementName=MenuItemBorder}" HorizontalOffset="1" VerticalOffset="-1">
                                             <Border BorderBrush="#414141" Background="#414141">
                                                 <ScrollViewer Style="{DynamicResource {ComponentResourceKey ResourceId=MenuScrollViewer, TypeInTargetAssembly={x:Type FrameworkElement}}}">
                                                     <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
@@ -360,6 +359,14 @@
             </MenuItem>
             <MenuItem Header="Edit">
                 <MenuItem Header="Select All (Ctrl+A)"/>
+            </MenuItem>
+            <MenuItem Header="Document">
+                <MenuItem Name="GoToGraphMenu" Header="Go to Graph">
+                    <MenuItem Header="Default (F1)"/>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="View">
+                <MenuItem Header="Show Nodes Tray" IsCheckable="True" IsChecked="False"/>
             </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="Manual"/>
@@ -759,9 +766,9 @@
                     </Style>
                 </nodify:NodifyEditor.ItemContainerStyle>
             </nodify:NodifyEditor>
-            <StackPanel Margin="4" Orientation="Vertical"
-        HorizontalAlignment="Right" VerticalAlignment="Bottom"
-        Background="Transparent">
+            <StackPanel Margin="4, 8" Orientation="Vertical"
+                HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                Background="Transparent">
                 <Label Margin="0" Padding="0" Foreground="#34A8A8A8" FontFamily="Arial" FontSize="16" FontWeight="Bold" Content="Beta Test" HorizontalAlignment="Center"/>
                 <Label Margin="0" Padding="0" Foreground="#34A8A8A8" FontFamily="Arial" FontSize="8" FontStyle="Italic" Content="Autumn 2024" HorizontalAlignment="Center"/>
                 <Label Margin="0" Padding="0" Foreground="#44A8A8A8" FontFamily="Arial" FontSize="8" Content="This version is not production ready." HorizontalAlignment="Right"/>
