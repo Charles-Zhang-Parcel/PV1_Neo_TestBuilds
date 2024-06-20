@@ -12,38 +12,37 @@ namespace Parcel.Neo.Base.Toolboxes.Generator
         #region Interface
         public string ToolboxName => "Generator";
         public string ToolboxAssemblyFullName => Assembly.GetExecutingAssembly().FullName;
-        public ToolboxNodeExport[] ExportNodes => new ToolboxNodeExport[] { };
-        public AutomaticNodeDescriptor[] AutomaticNodes => new AutomaticNodeDescriptor[]
-        {
+        public ToolboxNodeExport?[]? ExportNodes => Array.Empty<ToolboxNodeExport>();
+        public AutomaticNodeDescriptor?[]? AutomaticNodes => [
             // Random Numbers
-            new AutomaticNodeDescriptor("Random Number", new CacheDataType[]{}, CacheDataType.Number,
+            new("Random Number", [], CacheDataType.Number,
                 objects => new Random().NextDouble()),
-            new AutomaticNodeDescriptor("Random Integer in Range", new [] {CacheDataType.Number, CacheDataType.Number}, CacheDataType.Number,
+            new("Random Integer in Range", [CacheDataType.Number, CacheDataType.Number], CacheDataType.Number,
                 objects => new Random().Next((int)(double)objects[0], (int)(double)objects[1])),
-            new AutomaticNodeDescriptor("Random Numbers", new []{CacheDataType.Number}, CacheDataType.ParcelDataGrid,
+            new("Random Numbers", [CacheDataType.Number], CacheDataType.ParcelDataGrid,
                 objects =>
                 {
-                    Random random = new Random();
+                    Random random = new();
                     return new DataGrid(Enumerable.Range(0, (int)(double)objects[0]).Select(_ => random.NextDouble()));
                 }),
-            new AutomaticNodeDescriptor("Random Integers in Range", new [] {CacheDataType.Number, CacheDataType.Number, CacheDataType.Number}, CacheDataType.ParcelDataGrid,
+            new("Random Integers in Range", [CacheDataType.Number, CacheDataType.Number, CacheDataType.Number], CacheDataType.ParcelDataGrid,
                 objects =>
                 {
-                    Random random = new Random();
+                    Random random = new();
                     return new DataGrid(Enumerable.Range(0, (int)(double)objects[0]).Select(_ => random.Next((int)(double)objects[1], (int)(double)objects[2])));
                 })
             {
-                InputNames = new []{"Count", "Start", "End"}
+                InputNames = ["Count", "Start", "End"]
             },
             null, // Divisor line // Dates
-            new AutomaticNodeDescriptor("Today", new CacheDataType[]{}, CacheDataType.DateTime,
+            new("Today", [], CacheDataType.DateTime,
                 objects => DateTime.Today),
             null, // Divisor line // Strings
-            new AutomaticNodeDescriptor("Random Name", new CacheDataType[]{}, CacheDataType.String,
+            new("Random Name", [], CacheDataType.String,
                 objects => new PersonNameGenerator().GenerateRandomFirstAndLastName()),
-            new AutomaticNodeDescriptor("Random Names", new []{CacheDataType.Number}, CacheDataType.ParcelDataGrid,
-                objects => new DataGrid(new PersonNameGenerator().GenerateMultipleFirstAndLastNames((int)(double)objects[0]))),
-        };
+            new("Random Names", [CacheDataType.Number], CacheDataType.ParcelDataGrid,
+                objects => new DataGrid(new PersonNameGenerator().GenerateMultipleFirstAndLastNames((int)(double)objects[0])))
+        ];
         #endregion
     }
 }

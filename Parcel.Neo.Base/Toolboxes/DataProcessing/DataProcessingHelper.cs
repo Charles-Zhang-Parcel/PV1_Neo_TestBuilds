@@ -123,7 +123,7 @@ namespace Parcel.Neo.Base.Toolboxes.DataProcessing
             if (parameter.InputRowCount == parameter.InputTable.RowCount)
                 throw new ArgumentException("Take amount is the same as the amount of rows in table.");
 
-            DataGrid newDataGrid = new DataGrid();
+            DataGrid newDataGrid = new();
             foreach (DataColumn inputTableColumn in parameter.InputTable.Columns)
                 newDataGrid.AddColumnFrom(inputTableColumn, parameter.InputRowCount);
             parameter.OutputTable = newDataGrid;

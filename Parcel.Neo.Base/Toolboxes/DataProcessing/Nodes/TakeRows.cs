@@ -3,11 +3,10 @@ using Parcel.Neo.Base.DataTypes;
 using Parcel.Neo.Base.Framework;
 using Parcel.Neo.Base.Framework.ViewModels;
 using Parcel.Neo.Base.Framework.ViewModels.BaseNodes;
-using Parcel.Neo.Base.Toolboxes.DataProcessing;
 
 namespace Parcel.Neo.Base.Toolboxes.DataProcessing.Nodes
 {
-    public class Take : ProcessorNode
+    public class TakeRows : ProcessorNode
     {
         #region Node Interface
         private readonly InputConnector _dataTableInput = new InputConnector(typeof(DataGrid))
@@ -22,7 +21,7 @@ namespace Parcel.Neo.Base.Toolboxes.DataProcessing.Nodes
         {
             Title = "Data Table Column",
         };
-        public Take()
+        public TakeRows()
         {
             Title = NodeTypeName = "Take";
             Input.Add(_dataTableInput);
