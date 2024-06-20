@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Parcel.Neo.Base.DataTypes;
+using Parcel.Types;
 using Parcel.Neo.Base.Serialization;
+using Parcel.Types;
+using Parcel.Neo.Base.DataTypes;
 
 namespace Parcel.Neo.Base.Framework.ViewModels.BaseNodes
 {
@@ -96,7 +98,6 @@ namespace Parcel.Neo.Base.Framework.ViewModels.BaseNodes
                         Input.Add(new InputConnector(typeof(object)) { Title = preferredTitle ?? "Entity" });
                         break;
                     case CacheDataType.BatchJob:
-                    case CacheDataType.ServerConfig:
                         throw new NotImplementedException();
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -128,7 +129,6 @@ namespace Parcel.Neo.Base.Framework.ViewModels.BaseNodes
                         Output.Add(new OutputConnector(typeof(object)) { Title = preferredTitle ?? "Entity" });
                         break;
                     case CacheDataType.BatchJob:
-                    case CacheDataType.ServerConfig:
                         throw new NotImplementedException();
                     default:
                         throw new ArgumentOutOfRangeException();

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Parcel.Neo.Base.DataTypes;
+using Parcel.Types;
 using Parcel.Neo.Base.Framework.ViewModels.BaseNodes;
+using Parcel.Types;
+using Parcel.Neo.Base.DataTypes;
 
 namespace Parcel.Neo.Base.Framework.ViewModels
 {
@@ -65,13 +67,6 @@ namespace Parcel.Neo.Base.Framework.ViewModels
         }
 
         protected PrimitiveInputConnector(Type dataType) : base(dataType)
-        {
-        }
-    }
-
-    public class WebConfigInputConnector : InputConnector
-    {
-        public WebConfigInputConnector() : base(typeof(ServerConfig))
         {
         }
     }
@@ -260,13 +255,12 @@ namespace Parcel.Neo.Base.Framework.ViewModels
             {typeof(double), ConnectorShape.Circle},
             {typeof(DateTime), ConnectorShape.Circle},
             {typeof(DataGrid), ConnectorShape.Square},
-            {typeof(ServerConfig), ConnectorShape.RedSquare},
             {typeof(ControlFlow), ConnectorShape.RightTriangle},
         };
         private ConnectorShape DecideShape(Type dataType)
         {
-            if (_mappings.ContainsKey(dataType))
-                return _mappings[dataType];
+            if (_mappings.TryGetValue(dataType, out ConnectorShape value))
+                return value;
             return ConnectorShape.Circle;
         }
         #endregion
