@@ -370,6 +370,9 @@
             <MenuItem Header="View">
                 <MenuItem Header="Show Nodes Tray" IsCheckable="True" IsChecked="False"/>
             </MenuItem>
+            <MenuItem Header="Package">
+                <MenuItem Header="Import"/>
+            </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="Manual"/>
                 <MenuItem Header="Shortcuts"/>

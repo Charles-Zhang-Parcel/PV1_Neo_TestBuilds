@@ -12,6 +12,16 @@
     <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
     <PublishReadyToRun>true</PublishReadyToRun>
     <ApplicationIcon>Icon.ico</ApplicationIcon>
+    <Version>0.1.0</Version>
+    
+    <Title>Parcel PV1 Neo</Title>
+    <Authors>Charles Zhang</Authors>
+    <Company>Methodox.io</Company>
+    <Product>PV1 Neo</Product>
+    <Description>A Parcel NExT front-end.</Description>
+    <PackageProjectUrl>https://methodox.io/PV1_Neo</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/Charles-Zhang-Parcel/PV1_Neo</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,5 +42,12 @@
 
   <ItemGroup>
     <EmbeddedResource Include="PreviewWindows\sql.xshd.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 </Project>
