@@ -102,8 +102,7 @@ namespace Parcel.Neo.Base.Framework.ViewModels.BaseNodes
 
         #region Routines
         protected abstract NodeExecutionResult Execute();
-        private Dictionary<OutputConnector, ConnectorCache> ProcessorCache { get; } =
-            new Dictionary<OutputConnector, ConnectorCache>();
+        private Dictionary<OutputConnector, ConnectorCache> ProcessorCache { get; } = [];
         #endregion
 
         #region Auto Connect Interface
@@ -113,7 +112,7 @@ namespace Parcel.Neo.Base.Framework.ViewModels.BaseNodes
         private static bool IsPrimitiveInput(InputConnector connector)
             => connector is PrimitiveInputConnector;
         public virtual bool ShouldHaveAutoConnection => Input.Count != 0 && Input.Any(InputConnectorShouldRequireAutoConnection);
-        public virtual Tuple<ToolboxNodeExport, Vector2D, InputConnector>[] AutoGenerateNodes
+        public virtual Tuple<ToolboxNodeExport, Vector2D, InputConnector>[] AutoPopulatedConnectionNodes
         {
             get
             {
@@ -122,7 +121,7 @@ namespace Parcel.Neo.Base.Framework.ViewModels.BaseNodes
                 {
                     if(!InputConnectorShouldRequireAutoConnection(Input[i])) continue;
 
-                    ToolboxNodeExport toolDef = new(Input[i].Title, CacheTypeHelper.ConvertToNodeType(Input[i].DataType));
+                    ToolboxNodeExport toolDef = new(Input[i].Title, Input[i].DataType);
                     auto.Add(new Tuple<ToolboxNodeExport, Vector2D, InputConnector>(toolDef, new Vector2D(-180, -20 + (i - 1) * 50), Input[i]));
                 }
                 return [.. auto];

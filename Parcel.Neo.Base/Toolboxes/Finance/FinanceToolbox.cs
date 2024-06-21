@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Parcel.Neo.Base.Framework;
+﻿using Parcel.Neo.Base.Framework;
 using Parcel.Neo.Base.Toolboxes.Finance.Nodes;
 
 namespace Parcel.Neo.Base.Toolboxes.Finance
@@ -7,8 +6,6 @@ namespace Parcel.Neo.Base.Toolboxes.Finance
     public class FinanceToolbox : IToolboxDefinition
     {
         #region Interface
-        public string ToolboxName => "Finance";
-        public string ToolboxAssemblyFullName => Assembly.GetExecutingAssembly().FullName;
         public ToolboxNodeExport[] ExportNodes => new ToolboxNodeExport[]
         {
             // Basic - Operations on Columns (Those will check and validate column type as Number/Double)
@@ -21,10 +18,9 @@ namespace Parcel.Neo.Base.Toolboxes.Finance
             new("Covariance Matrix", typeof(CovarianceMatrix)), // This one operates on multiple columns
             new("Min", typeof(Min)),
             new("Max", typeof(Max)),
-            new("Range", typeof(object)), // Outputs Min, Max, and Max-Min; Also displays those numbers in three lines in the node message content
+            // NOT IMPLEMENTED: new("Range", typeof(object)), // Outputs Min, Max, and Max-Min; Also displays those numbers in three lines in the node message content
             new("Sum", typeof(Sum)),
         };
-        public AutomaticNodeDescriptor[] AutomaticNodes => System.Array.Empty<AutomaticNodeDescriptor>();
         #endregion
     }
 }

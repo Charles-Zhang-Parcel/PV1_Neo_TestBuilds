@@ -47,6 +47,9 @@ namespace Parcel.Neo
         #endregion
 
         #region Commands
+        /// <summary>
+        /// Provides bookkeeping for Repeat command
+        /// </summary>
         private ToolboxNodeExport LastTool { get; set; }
         
         public ICommand RepeatLastCommand { get; }
@@ -201,9 +204,9 @@ namespace Parcel.Neo
                     filePathNode.Path = saveFileDialog.FileName;
                 }
             }
-            else if (node is IAutoConnect autoConnect && autoConnect.ShouldHaveAutoConnection && node.AutoGenerateNodes != null)
+            else if (node is IAutoConnect autoConnect && autoConnect.ShouldHaveAutoConnection && node.AutoPopulatedConnectionNodes != null)
             {
-                foreach (Tuple<ToolboxNodeExport,Vector2D,InputConnector> generateNode in autoConnect.AutoGenerateNodes)
+                foreach (Tuple<ToolboxNodeExport,Vector2D,InputConnector> generateNode in autoConnect.AutoPopulatedConnectionNodes)
                 {
                     BaseNode temp = SpawnNode(generateNode.Item1, node.Location + generateNode.Item2);
                     if(temp is IMainOutputNode outputNode)
@@ -215,7 +218,7 @@ namespace Parcel.Neo
             }
             
             // Connection check
-            if (node.ShouldHaveAutoConnection && node.AutoGenerateNodes == null)
+            if (node.ShouldHaveAutoConnection && node.AutoPopulatedConnectionNodes == null)
             {
                 node.Message.Content = "Require Connection.";
                 node.Message.Type = NodeMessageType.Error;
@@ -265,12 +268,7 @@ namespace Parcel.Neo
         #region Routine
         private BaseNode SpawnNode(ToolboxNodeExport tool, Vector2D spawnLocation)
         {
-            if (tool.Descriptor != null && tool.Type != typeof(AutomaticProcessorNode))
-                throw new ArgumentException("Wrong type.");
-            
-            BaseNode node = tool.Descriptor != null 
-                ? new AutomaticProcessorNode(tool.Descriptor, tool.Toolbox)
-                : (BaseNode) Activator.CreateInstance(tool.Type);
+            BaseNode node = tool.InstantiateNode();
 
             if (node is ProcessorNode processorNode)
                 processorNode.Title = tool.Name;
@@ -364,16 +362,15 @@ namespace Parcel.Neo
                 Top = cursor.Y,
                 Topmost = true
             };
-            void action(ToolboxNodeExport toolboxNodeExport)
+            void CreateNodeFromSelectedSearchItem(ToolboxNodeExport? toolboxNodeExport)
             {
-                if (toolboxNodeExport != null 
-                    && toolboxNodeExport.Type != typeof(object)) // Don't do anything for placeholder nodes
+                if (toolboxNodeExport != null)
                 {
                     LastTool = toolboxNodeExport;
                     SpawnNode(LastTool, new Vector2D(spawnLocation.X, spawnLocation.Y));
                 }
             }
-            popupTab.ItemSelectedAdditionalCallback += action;
+            popupTab.ItemSelectedAdditionalCallback += CreateNodeFromSelectedSearchItem;
             popupTab.MouseLeave += delegate { popupTab.Close(); };  // ISSUE: This will cause Closed event being called before the OnClick event
             popupTab.Show();
         }

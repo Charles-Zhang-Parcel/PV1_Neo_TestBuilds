@@ -70,7 +70,7 @@ namespace Parcel.Neo.Base.Toolboxes.DataSource.Nodes
 
         #region Auto Connect Interface
         public override bool ShouldHaveAutoConnection => _symbolInput.Connections.Count == 0;
-        public override Tuple<ToolboxNodeExport, Vector2D, InputConnector>[] AutoGenerateNodes =>
+        public override Tuple<ToolboxNodeExport, Vector2D, InputConnector>[] AutoPopulatedConnectionNodes =>
             new Tuple<ToolboxNodeExport, Vector2D, InputConnector>[]
             {
                 new Tuple<ToolboxNodeExport, Vector2D, InputConnector>(new ToolboxNodeExport("String", typeof(StringNode)), new Vector2D(-250, -100), _symbolInput),

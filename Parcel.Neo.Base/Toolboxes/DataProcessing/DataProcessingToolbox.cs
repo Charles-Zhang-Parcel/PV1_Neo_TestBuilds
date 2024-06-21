@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Parcel.Neo.Base.Framework;
+﻿using Parcel.Neo.Base.Framework;
 using Parcel.Neo.Base.Toolboxes.DataProcessing.Nodes;
 
 namespace Parcel.Neo.Base.Toolboxes.DataProcessing
@@ -7,8 +6,6 @@ namespace Parcel.Neo.Base.Toolboxes.DataProcessing
     public class DataProcessingToolbox : IToolboxDefinition
     {
         #region Interface
-        public string ToolboxName => "Data Processing";
-        public string ToolboxAssemblyFullName => Assembly.GetExecutingAssembly().FullName;
         public ToolboxNodeExport?[]? ExportNodes => [
             // Data Types and IO
             new("CSV", typeof(CSV)),
@@ -55,7 +52,6 @@ namespace Parcel.Neo.Base.Toolboxes.DataProcessing
             new("Transpose", typeof(Transpose)),
             new("SQL Query", typeof(SQL))
         ];
-        public AutomaticNodeDescriptor[] AutomaticNodes => new AutomaticNodeDescriptor[] { };
         #endregion
     }
 }

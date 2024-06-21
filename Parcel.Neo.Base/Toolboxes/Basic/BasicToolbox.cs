@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Parcel.Neo.Base.Framework;
+﻿using Parcel.Neo.Base.Framework;
 using Parcel.Neo.Base.Framework.Advanced;
 using Parcel.Neo.Base.Framework.ViewModels.BaseNodes;
 using Parcel.Neo.Base.Framework.ViewModels.Primitives;
@@ -10,8 +9,6 @@ namespace Parcel.Neo.Base.Toolboxes.Basic
     public class BasicToolbox : IToolboxDefinition
     {
         #region Interface
-        public string ToolboxName => "Basic";
-        public string ToolboxAssemblyFullName => Assembly.GetExecutingAssembly().FullName!;
         public ToolboxNodeExport?[] ExportNodes => new ToolboxNodeExport?[]
         {
             new("Comment", typeof(CommentNode)),
@@ -31,7 +28,6 @@ namespace Parcel.Neo.Base.Toolboxes.Basic
             new("Graph Reference", typeof(GraphReferenceNode)),
             new("Sub Graph", typeof(object)),
         };
-        public AutomaticNodeDescriptor[] AutomaticNodes => System.Array.Empty<AutomaticNodeDescriptor>();
         #endregion
     }
 }
