@@ -13,7 +13,6 @@ using Parcel.Neo.Base.Toolboxes.DataProcessing;
 using Parcel.Neo.Base.Toolboxes.DataSource;
 using Parcel.Neo.Base.Toolboxes.FileSystem;
 using Parcel.Neo.Base.Toolboxes.Finance;
-using Parcel.Neo.Base.Toolboxes.Generator;
 using Parcel.Neo.Base.Toolboxes.Logic;
 using Parcel.Neo.Base.Toolboxes.Math;
 using Parcel.Neo.Base.Toolboxes.Special;
