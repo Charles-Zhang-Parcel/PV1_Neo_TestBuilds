@@ -77,6 +77,10 @@ namespace Parcel.Neo
         }
         #endregion
 
+        #region Configurations
+        private const string ImageProtocolIdentifier = "Image://";
+        #endregion
+
         #region Events
         private void PreviewWindow_OnMouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -97,36 +101,19 @@ namespace Parcel.Neo
             {
                 ConnectorCache cache = Node[output];
                 // Deal with special resource protocols
-                const string ImageProtocolIdentifier = "Image://";
                 if (cache.DataType == typeof(string) && (cache.DataObject as string).StartsWith(ImageProtocolIdentifier))
                 {
-                    string address = (cache.DataObject as string).Substring(ImageProtocolIdentifier.Length);
-                    PreviewImageVisibility = Visibility.Visible;
-                    PreviewImageControl.Source = new BitmapImage(new Uri(address));
-                    
-                    // Automatically adjust preview window size
-                    Width = PreviewImageControl.Source.Width;
-                    Height = PreviewImageControl.Source.Height;
+                    string address = (cache.DataObject as string)[ImageProtocolIdentifier.Length..];
+                    PreviewImage(address);
                 }
+                else if (cache.DataObject is System.Collections.IList list)
+                    PreviewCollections(list);
                 else if (cache.DataType == typeof(bool) || cache.DataType == typeof(string) || cache.DataType == typeof(double))
-                {
-                    TestLabel = $"{cache.DataObject}";
-                    InfoGridVisibility = Visibility.Visible;
-                }
+                    PreviewPrimitives(cache.DataObject);
                 else if (cache.DataType == typeof(Types.DataGrid))
-                {
-                    PopulateDataGrid(WpfDataGrid, cache.DataObject as Parcel.Types.DataGrid, out string[] dataGridDataColumns, out List<dynamic> dataGridData);
-                    DataGridDataColumns = dataGridDataColumns;
-                    DataGridData = dataGridData;
-                    DataGridVisibility = Visibility.Visible;
-                }
+                    PreviewDataGrid(cache.DataObject as Parcel.Types.DataGrid);
                 else if (cache.DataType == typeof(DataColumn))
-                {
-                    PopulateDataGrid(WpfDataGrid, new Types.DataGrid("Preview", cache.DataObject as Parcel.Types.DataColumn), out string[] dataGridDataColumns, out List<dynamic> dataGridData);
-                    DataGridDataColumns = dataGridDataColumns;
-                    DataGridData = dataGridData;
-                    DataGridVisibility = Visibility.Visible;
-                }
+                    PreviewColumnData(cache.DataObject as Parcel.Types.DataColumn);
                 else
                 {
                     TestLabel = $"No preview is available for this node's output ({cache.DataObject})";
@@ -135,6 +122,53 @@ namespace Parcel.Neo
             }
         }
 
+        private void PreviewCollections(System.Collections.IList list)
+        {
+            PopulateDataGrid(WpfDataGrid, new Types.DataGrid("Values", list), out string[] dataGridDataColumns, out List<dynamic> dataGridData);
+            DataGridDataColumns = dataGridDataColumns;
+            DataGridData = dataGridData;
+            DataGridVisibility = Visibility.Visible;
+        }
+        private void PreviewColumnData(DataColumn data)
+        {
+            PopulateDataGrid(WpfDataGrid, new Types.DataGrid("Preview", data), out string[] dataGridDataColumns, out List<dynamic> dataGridData);
+            DataGridDataColumns = dataGridDataColumns;
+            DataGridData = dataGridData;
+            DataGridVisibility = Visibility.Visible;
+        }
+
+        private void PreviewDataGrid(Types.DataGrid data)
+        {
+            PopulateDataGrid(WpfDataGrid, data, out string[] dataGridDataColumns, out List<dynamic> dataGridData);
+            DataGridDataColumns = dataGridDataColumns;
+            DataGridData = dataGridData;
+            DataGridVisibility = Visibility.Visible;
+        }
+
+        private void PreviewPrimitives(object data)
+        {
+            TestLabel = $"{data}";
+            InfoGridVisibility = Visibility.Visible;
+        }
+
+        private void PreviewImage(string address)
+        {
+            PreviewImageVisibility = Visibility.Visible;
+            PreviewImageControl.Source = new BitmapImage(new Uri(address));
+
+            // Automatically adjust preview window size
+            Width = PreviewImageControl.Source.Width;
+            Height = PreviewImageControl.Source.Height;
+        }
+
+
+        #endregion
+
+        #region Preview Functions
+
+        #endregion
+
+        #region Helpers
         public static void PopulateDataGrid(System.Windows.Controls.DataGrid wpfDataGrid, Types.DataGrid dataGrid,
             out string[] dataGridDataColumns, out List<dynamic> dataGridData)
         {
