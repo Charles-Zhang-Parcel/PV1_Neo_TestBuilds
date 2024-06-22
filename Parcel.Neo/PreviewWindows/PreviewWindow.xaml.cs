@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using Parcel.Neo.Base.Framework;
 using Parcel.Neo.Base.Framework.ViewModels;
 using Parcel.Neo.Base.Framework.ViewModels.BaseNodes;
@@ -35,6 +36,12 @@ namespace Parcel.Neo
             set => SetField(ref _testLabel, value);
         }
 
+        private Visibility _previewImageVisibility = Visibility.Collapsed;
+        public Visibility PreviewImageVisibility
+        {
+            get => _previewImageVisibility;
+            set => SetField(ref _previewImageVisibility, value);
+        }
         private Visibility _infoGridVisibility = Visibility.Visible;
         public Visibility InfoGridVisibility
         {
@@ -89,7 +96,19 @@ namespace Parcel.Neo
             if (Node.HasCache(output))
             {
                 ConnectorCache cache = Node[output];
-                if (cache.DataType == typeof(bool) || cache.DataType == typeof(string) || cache.DataType == typeof(double)) 
+                // Deal with special resource protocols
+                const string ImageProtocolIdentifier = "Image://";
+                if (cache.DataType == typeof(string) && (cache.DataObject as string).StartsWith(ImageProtocolIdentifier))
+                {
+                    string address = (cache.DataObject as string).Substring(ImageProtocolIdentifier.Length);
+                    PreviewImageVisibility = Visibility.Visible;
+                    PreviewImageControl.Source = new BitmapImage(new Uri(address));
+                    
+                    // Automatically adjust preview window size
+                    Width = PreviewImageControl.Source.Width;
+                    Height = PreviewImageControl.Source.Height;
+                }
+                else if (cache.DataType == typeof(bool) || cache.DataType == typeof(string) || cache.DataType == typeof(double))
                 {
                     TestLabel = $"{cache.DataObject}";
                     InfoGridVisibility = Visibility.Visible;
@@ -119,10 +138,8 @@ namespace Parcel.Neo
         public static void PopulateDataGrid(System.Windows.Controls.DataGrid wpfDataGrid, Types.DataGrid dataGrid,
             out string[] dataGridDataColumns, out List<dynamic> dataGridData)
         {
-            string FormatHeader(string header, string typeName)
-            {
-                return $"{header} ({typeName})";
-            }
+            static string FormatHeader(string header, string typeName) 
+                => $"{header} ({typeName})";
 
             List<dynamic> objects = dataGrid.Rows;
             Dictionary<string, Types.DataGrid.ColumnInfo> columnInfo = dataGrid.GetColumnInfoForDisplay();

@@ -4,15 +4,14 @@ using System.Linq;
 using Parcel.Types;
 using Parcel.Neo.Base.Framework.ViewModels.BaseNodes;
 using Parcel.Neo.Base.DataTypes;
+using System.ComponentModel;
 
 namespace Parcel.Neo.Base.Framework.ViewModels
 {
     public sealed class PrimitiveBooleanInputConnector : PrimitiveInputConnector
     {
-        public PrimitiveBooleanInputConnector() : base(typeof(bool))
-        {
-            Value = false;
-        }
+        public PrimitiveBooleanInputConnector(bool? defaultValue = null) : base(typeof(bool))
+            => Value = defaultValue ?? false;
 
         public override object Value 
         {  
@@ -23,11 +22,9 @@ namespace Parcel.Neo.Base.Framework.ViewModels
     
     public sealed class PrimitiveDateTimeInputConnector : PrimitiveInputConnector
     {
-        public PrimitiveDateTimeInputConnector() : base(typeof(DateTime))
-        {
-            Value = DateTime.Now.Date;
-        }
-        
+        public PrimitiveDateTimeInputConnector(DateTime? defaultValue = null) : base(typeof(DateTime)) 
+            => Value = defaultValue ?? DateTime.Now.Date;
+
         public override object Value 
         {  
             get => _defaultDataStorage;
@@ -37,61 +34,53 @@ namespace Parcel.Neo.Base.Framework.ViewModels
     
     public sealed class PrimitiveStringInputConnector : PrimitiveInputConnector
     {
-        public PrimitiveStringInputConnector() : base(typeof(string))
-        {
-            Value = string.Empty;
-        }
+        public PrimitiveStringInputConnector(string? defaultValue = null) : base(typeof(string))
+            => Value = defaultValue ?? string.Empty;
     }
     
     public sealed class PrimitiveNumberInputConnector : PrimitiveInputConnector
     {
-        public PrimitiveNumberInputConnector() : base(typeof(double))
+        public PrimitiveNumberInputConnector(Type type, object? defaultValue = null) : base(type)
         {
-            Value = 0.0;
+            if (!type.IsValueType)
+                throw new ArgumentException($"Invalid type for numberi nput: {type.Name}");
+            Value = defaultValue ?? Activator.CreateInstance(type)!;
         }
         
         public override object Value 
         {  
             get => _defaultDataStorage;
-            set => SetField(ref _defaultDataStorage, value is string s ? double.Parse(s) : value); 
+            set => SetField(ref _defaultDataStorage, value is string s ? TypeDescriptor.GetConverter(DataType).ConvertFromInvariantString(s) : value); 
         }
     }
     
     public abstract class PrimitiveInputConnector : InputConnector
     {
-        public virtual object Value
+        public virtual object? Value
         {
             get => _defaultDataStorage;
             set => SetField(ref _defaultDataStorage, value);
         }
 
-        protected PrimitiveInputConnector(Type dataType) : base(dataType)
-        {
-        }
+        protected PrimitiveInputConnector(Type dataType) : base(dataType) { }
     }
 
     public class InputConnector : BaseConnector
     {
         public InputConnector(Type dataType) : base(dataType)
-        {
-            FlowType = ConnectorFlowType.Input;
-        }
+            => FlowType = ConnectorFlowType.Input;
     }
 
     public class OutputConnector : BaseConnector
     {
         public OutputConnector(Type dataType) : base(dataType)
-        {
-            FlowType = ConnectorFlowType.Output;
-        }
+            => FlowType = ConnectorFlowType.Output;
     }
     
     public class KnotConnector : BaseConnector
     {
         public KnotConnector(Type dataType) : base(dataType)
-        {
-            FlowType = ConnectorFlowType.Knot;
-        }
+            => FlowType = ConnectorFlowType.Knot;
     }
     
     public abstract class BaseConnector: ObservableObject
@@ -144,7 +133,7 @@ namespace Parcel.Neo.Base.Framework.ViewModels
         #region Other Properties
         public ConnectorFlowType FlowType { get; protected set; }
         public int MaxConnections { get; set; } = int.MaxValue;
-        public NotifyObservableCollection<BaseConnection> Connections { get; } = new NotifyObservableCollection<BaseConnection>();
+        public NotifyObservableCollection<BaseConnection> Connections { get; } = [];
         
         public Type DataType { get; set; }
         /// <summary>
@@ -211,7 +200,7 @@ namespace Parcel.Neo.Base.Framework.ViewModels
             if (Connections.Count > 1)
                 throw new InvalidOperationException("Input connector has more than 1 connection.");
 
-            BaseConnection connection = Connections.SingleOrDefault();
+            BaseConnection? connection = Connections.SingleOrDefault();
             if (typeof(T) == DataType || typeof(T).IsAssignableFrom(DataType))
             {
                 if (connection != null)
@@ -247,11 +236,12 @@ namespace Parcel.Neo.Base.Framework.ViewModels
         #endregion
 
         #region Routines
-        private readonly Dictionary<Type, ConnectorShape> _mappings = new Dictionary<Type, ConnectorShape>()
+        private readonly Dictionary<Type, ConnectorShape> _mappings = new()
         {
             {typeof(bool), ConnectorShape.Triangle},
             {typeof(string), ConnectorShape.Circle},
             {typeof(double), ConnectorShape.Circle},
+            {typeof(int), ConnectorShape.Circle},
             {typeof(DateTime), ConnectorShape.Circle},
             {typeof(DataGrid), ConnectorShape.Square},
             {typeof(ControlFlow), ConnectorShape.RightTriangle},

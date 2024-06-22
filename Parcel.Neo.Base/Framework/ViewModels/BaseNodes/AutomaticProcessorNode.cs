@@ -34,6 +34,7 @@ namespace Parcel.Neo.Base.Framework.ViewModels.BaseNodes
             // Serialization
             AutomaticNodeType = descriptor.NodeName;
             InputTypes = descriptor.InputTypes;
+            DefaultInputValues = descriptor.DefaultInputValues;
             OutputTypes = descriptor.OutputTypes;
             InputNames = descriptor.InputNames;
             OutputNames = descriptor.OutputNames;
@@ -73,16 +74,17 @@ namespace Parcel.Neo.Base.Framework.ViewModels.BaseNodes
             for (int index = 0; index < InputTypes.Length; index++)
             {
                 Type inputType = InputTypes[index];
+                object? defaultValue = DefaultInputValues?[index];
                 string preferredTitle = InputNames?[index];
                 if (inputType == typeof(bool))
-                    Input.Add(new PrimitiveBooleanInputConnector() { Title = preferredTitle ?? "Bool" });
+                    Input.Add(new PrimitiveBooleanInputConnector(defaultValue != null ? (bool) defaultValue : null) { Title = preferredTitle ?? "Bool" });
                 else if (inputType == typeof(string))
-                    Input.Add(new PrimitiveStringInputConnector() { Title = preferredTitle ?? "String" });
-                else if (inputType == typeof(double))
-                    Input.Add(new PrimitiveNumberInputConnector() { Title = preferredTitle ?? "Number" });
+                    Input.Add(new PrimitiveStringInputConnector(defaultValue != null ? (string)defaultValue : null) { Title = preferredTitle ?? "String" });
+                else if (IsNumericalType(inputType))
+                    Input.Add(new PrimitiveNumberInputConnector(inputType, defaultValue) { Title = preferredTitle ?? "Number" });
                 else if (inputType == typeof(DateTime))
-                    Input.Add(new PrimitiveDateTimeInputConnector() { Title = preferredTitle ?? "Date" });
-                else 
+                    Input.Add(new PrimitiveDateTimeInputConnector(defaultValue != null ? (DateTime)defaultValue : null) { Title = preferredTitle ?? "Date" });
+                else
                     Input.Add(new InputConnector(inputType) { Title = preferredTitle ?? "Input" });
             }
 
@@ -108,6 +110,11 @@ namespace Parcel.Neo.Base.Framework.ViewModels.BaseNodes
                 else
                     return null;
             }
+
+            static bool IsNumericalType(Type inputType)
+            {
+                return inputType == typeof(double) || inputType == typeof(int);
+            }
         }
         #endregion
 
@@ -115,6 +122,7 @@ namespace Parcel.Neo.Base.Framework.ViewModels.BaseNodes
         private string AutomaticNodeType { get; set; }
         private Type[] InputTypes { get; set; }
         private Type[] OutputTypes { get; set; }
+        private object?[]? DefaultInputValues { get; set; }
         private string[] InputNames { get; set; }
         private string[] OutputNames { get; set; }
         #endregion
@@ -122,7 +130,7 @@ namespace Parcel.Neo.Base.Framework.ViewModels.BaseNodes
         #region Processor Interface
         protected override NodeExecutionResult Execute()
         {
-            Dictionary<OutputConnector, object> cache = new Dictionary<OutputConnector, object>();
+            Dictionary<OutputConnector, object> cache = [];
             
             Func<object[], object[]> marshal = RetrieveCallMarshal();
             object[] outputs = marshal.Invoke(Input.Select(i => i.FetchInputValue<object>()).ToArray());
