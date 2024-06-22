@@ -13,6 +13,7 @@ using System.Reflection;
 using System;
 using System.Linq;
 using System.IO;
+using Humanizer;
 
 namespace Parcel.Neo.Base.Framework
 {
@@ -63,6 +64,10 @@ namespace Parcel.Neo.Base.Framework
             AddToolbox(toolboxes, "Special", new SpecialToolbox());
             // Register specific types
             RegisterType(toolboxes, "Data Grid", typeof(Types.DataGrid));
+            // Register specific types - Direct borrow // TODO: Allow merging/continuously adding to a single toolbox
+            RegisterType(toolboxes, "Statistics", typeof(MathNet.Numerics.Statistics.Statistics)); // TODO: Might provide selective set of functions instead of everything; Alternative, figure out how to do in-app documentation
+            RegisterType(toolboxes, "Correlation", typeof(MathNet.Numerics.Statistics.Correlation));
+            RegisterType(toolboxes, "String Processing", typeof(InflectorExtensions));
             return toolboxes;
         }
         #endregion
