@@ -141,6 +141,7 @@ namespace Parcel.Neo
         #region GUI Events
         private void PopupTab_OnMouseDown(object sender, MouseButtonEventArgs e)
         {
+            // TODO: Why do we have this?
             DragMove();
         }
         private void PopupTab_OnPreviewKeyDown(object sender, KeyEventArgs e)

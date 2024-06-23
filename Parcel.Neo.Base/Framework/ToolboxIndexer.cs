@@ -14,6 +14,7 @@ using System;
 using System.Linq;
 using System.IO;
 using Humanizer;
+using Parcel.Neo.Base.Framework.ViewModels;
 
 namespace Parcel.Neo.Base.Framework
 {
@@ -50,7 +51,7 @@ namespace Parcel.Neo.Base.Framework
             RegisterToolbox(toolboxAssemblies, "Vector", Assembly.Load("Parcel.Vector"));
 
             // Index nodes
-            Dictionary<string, ToolboxNodeExport[]> toolboxes = IndexToolboxes(toolboxAssemblies);
+            Dictionary<string, ToolboxNodeExport?[]> toolboxes = IndexToolboxes(toolboxAssemblies);
             // Index new internal toolboxes
             AddToolbox(toolboxes, "Basic", new BasicToolbox());
             AddToolbox(toolboxes, "Control Flow", new ControlFlowToolbox());
@@ -64,10 +65,12 @@ namespace Parcel.Neo.Base.Framework
             AddToolbox(toolboxes, "Special", new SpecialToolbox());
             // Register specific types
             RegisterType(toolboxes, "Data Grid", typeof(Types.DataGrid));
-            // Register specific types - Direct borrow // TODO: Allow merging/continuously adding to a single toolbox
+            // Register specific types - directly borrow from libraries
+            RegisterType(toolboxes, "Collections", typeof(System.Linq.Enumerable));
             RegisterType(toolboxes, "Statistics", typeof(MathNet.Numerics.Statistics.Statistics)); // TODO: Might provide selective set of functions instead of everything; Alternative, figure out how to do in-app documentation
-            RegisterType(toolboxes, "Correlation", typeof(MathNet.Numerics.Statistics.Correlation));
+            RegisterType(toolboxes, "Statistics", typeof(MathNet.Numerics.Statistics.Correlation));
             RegisterType(toolboxes, "String Processing", typeof(InflectorExtensions));
+
             return toolboxes;
         }
         #endregion
@@ -112,11 +115,11 @@ namespace Parcel.Neo.Base.Framework
 
             toolboxAssemblies.Add(name, assembly);
         }
-        private static void AddToolbox(Dictionary<string, ToolboxNodeExport[]> toolboxes, string name, IToolboxDefinition toolbox)
+        private static void AddToolbox(Dictionary<string, ToolboxNodeExport?[]> toolboxes, string name, IToolboxDefinition toolbox)
         {
-            List<ToolboxNodeExport> nodes = [];
+            List<ToolboxNodeExport?> nodes = [];
 
-            foreach (ToolboxNodeExport nodeExport in toolbox.ExportNodes)
+            foreach (ToolboxNodeExport? nodeExport in toolbox?.ExportNodes ?? [])
                 nodes.Add(nodeExport);
 
             toolboxes[name] = [.. nodes];
@@ -137,11 +140,15 @@ namespace Parcel.Neo.Base.Framework
                     .ToArray();
             return [];
         }
-        private static void RegisterType(Dictionary<string, ToolboxNodeExport[]> toolboxes, string name, Type type)
+        private static void RegisterType(Dictionary<string, ToolboxNodeExport?[]> toolboxes, string name, Type type)
         {
             List<ToolboxNodeExport> nodes = [.. GetInstanceMethods(type), .. GetStaticMethods(type)];
 
-            toolboxes[name] = [.. nodes];
+            if (toolboxes.ContainsKey(name))
+                // Add divider
+                toolboxes[name] = [.. toolboxes[name], null, .. nodes];
+            else
+                toolboxes[name] = [.. nodes];
         }
         private static IEnumerable<ToolboxNodeExport> GetStaticMethods(Type type)
         {
