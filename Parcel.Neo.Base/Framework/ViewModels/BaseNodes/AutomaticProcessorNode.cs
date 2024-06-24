@@ -77,13 +77,13 @@ namespace Parcel.Neo.Base.Framework.ViewModels.BaseNodes
                 object? defaultValue = DefaultInputValues?[index];
                 string preferredTitle = InputNames?[index];
                 if (inputType == typeof(bool))
-                    Input.Add(new PrimitiveBooleanInputConnector(defaultValue != null ? (bool) defaultValue : null) { Title = preferredTitle ?? "Bool" });
+                    Input.Add(new PrimitiveBooleanInputConnector(defaultValue != DBNull.Value ? (bool) defaultValue : null) { Title = preferredTitle ?? "Bool" });
                 else if (inputType == typeof(string))
-                    Input.Add(new PrimitiveStringInputConnector(defaultValue != null ? (string)defaultValue : null) { Title = preferredTitle ?? "String" });
+                    Input.Add(new PrimitiveStringInputConnector(defaultValue != DBNull.Value ? (string)defaultValue : null) { Title = preferredTitle ?? "String" });
                 else if (IsNumericalType(inputType))
-                    Input.Add(new PrimitiveNumberInputConnector(inputType, defaultValue) { Title = preferredTitle ?? "Number" });
+                    Input.Add(new PrimitiveNumberInputConnector(inputType, defaultValue == DBNull.Value ? null : defaultValue) { Title = preferredTitle ?? "Number" });
                 else if (inputType == typeof(DateTime))
-                    Input.Add(new PrimitiveDateTimeInputConnector(defaultValue != null ? (DateTime)defaultValue : null) { Title = preferredTitle ?? "Date" });
+                    Input.Add(new PrimitiveDateTimeInputConnector(defaultValue != DBNull.Value ? (DateTime)defaultValue : null) { Title = preferredTitle ?? "Date" });
                 else
                     Input.Add(new InputConnector(inputType) { Title = preferredTitle ?? "Input" });
             }
