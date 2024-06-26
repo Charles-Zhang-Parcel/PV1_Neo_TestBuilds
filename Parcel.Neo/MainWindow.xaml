@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" 
         xmlns:local="clr-namespace:Parcel.Neo"
         xmlns:nodify="clr-namespace:Nodify;assembly=Nodify"
         xmlns:viewModels="clr-namespace:Parcel.Neo.Base.Framework.ViewModels;assembly=Parcel.Neo.Base"
@@ -265,6 +266,20 @@
                                                  MinWidth="25"
                                                  PreviewKeyDown="PrimitiveInputTextbox_OnPreviewKeyDown_CommandOverride"
                                                  Visibility="{Binding IsConnected, Converter={converters:BooleanToVisibilityConverter Negate=True}}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </nodify:NodeInput.HeaderTemplate>
+                        </nodify:NodeInput>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type viewModels:PrimitiveDateTimeInputConnector}">
+                        <nodify:NodeInput>
+                            <nodify:NodeInput.HeaderTemplate>
+                                <DataTemplate DataType="{x:Type viewModels:PrimitiveDateTimeInputConnector}">
+                                    <StackPanel Orientation="Horizontal" DataContext="{Binding Path=DataContext, 
+                                            RelativeSource={RelativeSource AncestorType={x:Type nodify:NodeInput},Mode=FindAncestor}}">
+                                        <TextBlock Text="{Binding Title}" Margin="0 0 5 0" />
+                                        <xctk:DateTimePicker  Text="{Binding Value}" Format="Custom" FormatString="yyyy-MM-dd HH:mm:ss" MinWidth="25"
+                                            Visibility="{Binding IsConnected, Converter={converters:BooleanToVisibilityConverter Negate=True}}"/>
                                     </StackPanel>
                                 </DataTemplate>
                             </nodify:NodeInput.HeaderTemplate>
