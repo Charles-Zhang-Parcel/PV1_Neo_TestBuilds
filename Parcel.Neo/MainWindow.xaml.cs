@@ -14,7 +14,6 @@ using Parcel.Neo.Base.Framework.ViewModels.BaseNodes;
 using Parcel.Neo.Base.Framework.ViewModels.Primitives;
 using Parcel.Neo.Base.Toolboxes.Basic.Nodes;
 using Parcel.Neo.Base.Toolboxes.DataProcessing.Nodes;
-using Parcel.Neo.Base.Toolboxes.FileSystem.Nodes;
 using Parcel.Neo.PopupWindows;
 using BaseConnection = Parcel.Neo.Base.Framework.ViewModels.BaseConnection;
 using Parcel.Neo.Base.DataTypes;
@@ -100,7 +99,7 @@ namespace Parcel.Neo
         #region Events
         private void MainWindow_OnPreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Tab)
+            if (e.Key == Key.Tab || e.Key == Key.F3)
             {
                 ShowSearchNodePopup();
                 e.Handled = true;
@@ -191,19 +190,20 @@ namespace Parcel.Neo
                     filePathNode.Path = openFileDialog.FileName;
                 }
             }
-            if (node is WriteCSV && node.ShouldHaveAutoConnection)
-            {
-                SaveFileNode filePathNode = SpawnNode(new ToolboxNodeExport("File Path", typeof(SaveFileNode)),
-                    node.Location + new Vector2D(-200, -60)) as SaveFileNode;
-                Canvas.Schema.TryAddConnection(filePathNode!.MainOutput, node.Input.First());
+            // TODO: Somehow recover the following behavior
+            //if (node is WriteCSV && node.ShouldHaveAutoConnection)
+            //{
+            //    SaveFileNode filePathNode = SpawnNode(new ToolboxNodeExport("File Path", typeof(SaveFileNode)),
+            //        node.Location + new Vector2D(-200, -60)) as SaveFileNode;
+            //    Canvas.Schema.TryAddConnection(filePathNode!.MainOutput, node.Input.First());
 
-                SaveFileDialog saveFileDialog = new SaveFileDialog() { Title = "Select Path to Save" };
-                saveFileDialog.Filter = "CSV file (*.csv)|*.csv|All types (*.*)|*.*";
-                if (saveFileDialog.ShowDialog() == true)
-                {
-                    filePathNode.Path = saveFileDialog.FileName;
-                }
-            }
+            //    SaveFileDialog saveFileDialog = new SaveFileDialog() { Title = "Select Path to Save" };
+            //    saveFileDialog.Filter = "CSV file (*.csv)|*.csv|All types (*.*)|*.*";
+            //    if (saveFileDialog.ShowDialog() == true)
+            //    {
+            //        filePathNode.Path = saveFileDialog.FileName;
+            //    }
+            //}
             else if (node is IAutoConnect autoConnect && autoConnect.ShouldHaveAutoConnection && node.AutoPopulatedConnectionNodes != null)
             {
                 foreach (Tuple<ToolboxNodeExport,Vector2D,InputConnector> generateNode in autoConnect.AutoPopulatedConnectionNodes)

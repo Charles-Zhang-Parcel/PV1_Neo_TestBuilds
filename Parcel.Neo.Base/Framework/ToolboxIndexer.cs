@@ -1,7 +1,6 @@
 ﻿using Parcel.Neo.Base.Toolboxes.Basic;
 using Parcel.Neo.Base.Toolboxes.DataProcessing;
 using Parcel.Neo.Base.Toolboxes.DataSource;
-using Parcel.Neo.Base.Toolboxes.FileSystem;
 using Parcel.Neo.Base.Toolboxes.Finance;
 using Parcel.Neo.Base.Toolboxes.Logic;
 using Parcel.Neo.Base.Toolboxes.Math;
@@ -52,6 +51,7 @@ namespace Parcel.Neo.Base.Framework
             RegisterToolbox(toolboxAssemblies, "In-Memory Database", Assembly.Load("Parcel.InMemoryDB"));
             RegisterToolbox(toolboxAssemblies, "Database Service", Assembly.Load("Parcel.InMemoryDB.Integration"));
             RegisterToolbox(toolboxAssemblies, "Database Application", Assembly.Load("Parcel.InMemoryDB.WebSurveys"));
+            RegisterToolbox(toolboxAssemblies, "File System", Assembly.Load("Parcel.FileSystem"));
             // Index nodes
             Dictionary<string, ToolboxNodeExport?[]> toolboxes = IndexToolboxes(toolboxAssemblies);
             // Index new internal toolboxes
@@ -59,7 +59,6 @@ namespace Parcel.Neo.Base.Framework
             AddToolbox(toolboxes, "Control Flow", new ControlFlowToolbox());
             AddToolbox(toolboxes, "Data Processing", new DataProcessingToolbox());
             AddToolbox(toolboxes, "Data Source", new DataSourceToolbox());
-            AddToolbox(toolboxes, "File System", new FileSystemToolbox());
             AddToolbox(toolboxes, "Finance", new FinanceToolbox());
             AddToolbox(toolboxes, "Boolean algebra", new LogicToolbox());
             AddToolbox(toolboxes, "Math", new MathToolbox());

@@ -263,7 +263,7 @@
                                         <TextBlock Text="{Binding Title}"
                                                    Margin="0 0 5 0" />
                                         <TextBox Text="{Binding Value}"
-                                                 MinWidth="25"
+                                                 MinWidth="32" MaxWidth="250"
                                                  PreviewKeyDown="PrimitiveInputTextbox_OnPreviewKeyDown_CommandOverride"
                                                  Visibility="{Binding IsConnected, Converter={converters:BooleanToVisibilityConverter Negate=True}}" />
                                     </StackPanel>

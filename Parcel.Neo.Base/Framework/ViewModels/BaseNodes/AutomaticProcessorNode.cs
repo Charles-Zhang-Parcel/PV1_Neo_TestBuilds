@@ -4,6 +4,8 @@ using System.Linq;
 using Parcel.Types;
 using Parcel.Neo.Base.Serialization;
 using Parcel.Neo.Base.DataTypes;
+using System.Diagnostics;
+using System.IO;
 
 namespace Parcel.Neo.Base.Framework.ViewModels.BaseNodes
 {
@@ -158,17 +160,27 @@ namespace Parcel.Neo.Base.Framework.ViewModels.BaseNodes
         protected override NodeExecutionResult Execute()
         {
             Dictionary<OutputConnector, object> cache = [];
-            
-            Func<object[], object[]> marshal = RetrieveCallMarshal();
-            object[] outputs = marshal.Invoke(Input.Select(i => i.FetchInputValue<object>()).ToArray());
-            for (int index = 0; index < outputs.Length; index++)
-            {
-                object output = outputs[index];
-                OutputConnector connector = Output[index];
-                cache[connector] = output;
-            }
 
-            return new NodeExecutionResult(new NodeMessage(), cache);
+            try
+            {
+                Stopwatch timer = new();
+                timer.Start();
+                Func<object[], object[]> marshal = RetrieveCallMarshal();
+                object[] outputs = marshal.Invoke(Input.Select(i => i.FetchInputValue<object>()).ToArray());
+                for (int index = 0; index < outputs.Length; index++)
+                {
+                    object output = outputs[index];
+                    OutputConnector connector = Output[index];
+                    cache[connector] = output;
+                }
+                timer.Stop();
+
+                return new NodeExecutionResult(new NodeMessage($"Finished in {timer.ElapsedMilliseconds:F2}ms"), cache);
+            }
+            catch (Exception e)
+            {
+                return new NodeExecutionResult(new NodeMessage($"Error: {e.InnerException?.Message ?? e.Message}", NodeMessageType.Error), null);
+            }
         }
         #endregion
 

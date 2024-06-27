@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -90,6 +91,14 @@ namespace Parcel.Neo
         #endregion
 
         #region Routines
+        private static readonly Type[] PrimitiveTypes = [
+            typeof(string),
+            typeof(bool),
+            typeof(byte),
+            typeof(int),
+            typeof(float),
+            typeof(double),
+        ];
         private void GeneratePreviewForOutput()
         {
             WindowGrid.Children.Clear();
@@ -106,9 +115,11 @@ namespace Parcel.Neo
                     string address = (cache.DataObject as string)[ImageProtocolIdentifier.Length..];
                     PreviewImage(address);
                 }
+                else if (cache.DataType.IsArray && PrimitiveTypes.Any(t => t.IsAssignableFrom(cache.DataType.GetElementType()))) // This should not be necessary since the handling of IList should have already handled it
+                    PreviewPrimitiveArray((Array)cache.DataObject);
                 else if (cache.DataObject is System.Collections.IList list)
                     PreviewCollections(list);
-                else if (cache.DataType == typeof(bool) || cache.DataType == typeof(string) || cache.DataType == typeof(double))
+                else if (PrimitiveTypes.Contains(cache.DataType))
                     PreviewPrimitives(cache.DataObject);
                 else if (cache.DataType == typeof(Types.DataGrid))
                     PreviewDataGrid(cache.DataObject as Parcel.Types.DataGrid);
@@ -121,7 +132,6 @@ namespace Parcel.Neo
                 }
             }
         }
-
         private void PreviewCollections(System.Collections.IList list)
         {
             PopulateDataGrid(WpfDataGrid, new Types.DataGrid("Values", list), out string[] dataGridDataColumns, out List<dynamic> dataGridData);
@@ -136,7 +146,13 @@ namespace Parcel.Neo
             DataGridData = dataGridData;
             DataGridVisibility = Visibility.Visible;
         }
-
+        private void PreviewPrimitiveArray(Array array)
+        {
+            PopulateDataGrid(WpfDataGrid, new Types.DataGrid("Values", array), out string[] dataGridDataColumns, out List<dynamic> dataGridData);
+            DataGridDataColumns = dataGridDataColumns;
+            DataGridData = dataGridData;
+            DataGridVisibility = Visibility.Visible;
+        }
         private void PreviewDataGrid(Types.DataGrid data)
         {
             PopulateDataGrid(WpfDataGrid, data, out string[] dataGridDataColumns, out List<dynamic> dataGridData);
