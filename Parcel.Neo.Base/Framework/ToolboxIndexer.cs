@@ -188,7 +188,7 @@ namespace Parcel.Neo.Base.Framework
         private static IEnumerable<ToolboxNodeExport?> GetExportNodesFromGenericAssembly(Assembly assembly)
         {
             Type[] types = assembly.GetExportedTypes()
-                .Where(t => t.IsAbstract)
+                .Where(t => t.IsAbstract) // TODO: Support instance methods
                 .Where(t => t.Name != "Object")
                 .ToArray();
 
