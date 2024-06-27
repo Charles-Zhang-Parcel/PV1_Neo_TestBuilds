@@ -104,6 +104,7 @@ namespace Parcel.Neo.Base.Framework
                     })
                     {
                         InputNames = [.. nodeInputTypes.Select(t => t.Item2)],
+                        OutputNames = [.. nodeOutputTypes.Select(t => t.Item2)],
                         DefaultInputValues = [.. nodeInputTypes.Select(t => t.Item3)]
                     });
                 case NodeImplementationType.AutomaticLambda:
