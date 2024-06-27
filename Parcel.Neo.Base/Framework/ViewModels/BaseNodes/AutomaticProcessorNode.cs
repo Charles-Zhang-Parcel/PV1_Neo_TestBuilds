@@ -150,7 +150,7 @@ namespace Parcel.Neo.Base.Framework.ViewModels.BaseNodes
         private Type[] InputTypes { get; set; }
         private Type[] OutputTypes { get; set; }
         private object?[]? DefaultInputValues { get; set; }
-        private string[] InputNames { get; set; }
+        private string[]? InputNames { get; set; }
         private string[] OutputNames { get; set; }
         #endregion
 

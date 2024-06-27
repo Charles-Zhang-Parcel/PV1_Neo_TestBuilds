@@ -1,6 +1,5 @@
 ﻿using System;
 using Parcel.Neo.Base.Framework.ViewModels;
-using Parcel.Neo.Base.DataTypes;
 
 namespace Parcel.Neo.Base.Framework
 {
@@ -28,14 +27,14 @@ namespace Parcel.Neo.Base.Framework
         public Type[] InputTypes { get; }
         public object?[]? DefaultInputValues { get; set; }
         public Type[] OutputTypes { get; }
-        public Func<object[], object[]> CallMarshal { get; }
+        public Func<object?[], object?[]> CallMarshal { get; }
 
         #region Additional Payload
-        public string[] InputNames { get; set; }
-        public string[] OutputNames { get; set; }
+        public string[]? InputNames { get; set; }
+        public string[]? OutputNames { get; set; }
         #endregion
 
-        public AutomaticNodeDescriptor(string nodeName, Type[] inputTypes, Type[] outputTypes, Func<object[], object[]> callMarshal, object?[]? defaultInputValues = null)
+        public AutomaticNodeDescriptor(string nodeName, Type[] inputTypes, Type[] outputTypes, Func<object?[], object?[]> callMarshal, object?[]? defaultInputValues = null)
         {
             NodeName = nodeName;
             InputTypes = inputTypes;
@@ -43,7 +42,7 @@ namespace Parcel.Neo.Base.Framework
             DefaultInputValues = defaultInputValues;
             CallMarshal = callMarshal;
         }
-        public AutomaticNodeDescriptor(string nodeName, Type[] inputTypes, Type outputType, Func<object[], object> callMarshal, object?[]? defaultInputValues = null)
+        public AutomaticNodeDescriptor(string nodeName, Type[] inputTypes, Type outputType, Func<object?[], object?> callMarshal, object?[]? defaultInputValues = null)
         {
             NodeName = nodeName;
             InputTypes = inputTypes;
