@@ -147,7 +147,9 @@ namespace Parcel.Neo.Base.Framework
             IEnumerable<MethodInfo> methods = type
                             .GetMethods(BindingFlags.Public | BindingFlags.Static)
                             .Where(m => m.DeclaringType != typeof(object))
-                            .OrderBy(t => t.Name);
+                            .OrderBy(t => t.Name)
+                            .GroupBy(m => m.Name)
+                            .Select(g => g.First()); // Remark-cz: Quick hack for 2024-06-28 build to reduce visual clustering;
             foreach (MethodInfo method in methods)
                 yield return new ToolboxNodeExport(method.Name, method);
         }
@@ -156,7 +158,9 @@ namespace Parcel.Neo.Base.Framework
             IEnumerable<MethodInfo> methods = type
                             .GetMethods(BindingFlags.Public | BindingFlags.Instance)
                             .Where(m => m.DeclaringType != typeof(object))
-                            .OrderBy(t => t.Name);
+                            .OrderBy(t => t.Name)
+                            .GroupBy(m => m.Name)
+                            .Select(g => g.First()); // Remark-cz: Quick hack for 2024-06-28 build to reduce visual clustering
             foreach (MethodInfo method in methods)
                 yield return new ToolboxNodeExport(method.Name, method);
         }
@@ -189,7 +193,9 @@ namespace Parcel.Neo.Base.Framework
                     .Where(m => m.DeclaringType != typeof(object))
                     .ToArray();
 
-                foreach (MethodInfo method in methods)
+                foreach (MethodInfo method in methods
+                    .GroupBy(m => m.Name)
+                    .Select(g => g.First())) // Remark-cz: Quick hack for 2024-06-28 build to reduce visual clustering
                     yield return new ToolboxNodeExport(method.Name, method);
 
                 // Add divider
