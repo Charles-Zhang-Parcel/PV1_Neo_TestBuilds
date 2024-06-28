@@ -357,6 +357,10 @@
                                     <Trigger Property="IsHighlighted" Value="True">
                                         <Setter Property="Background" Value="#1271C8"/>
                                     </Trigger>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Background" Value="LightGray"/>
+                                        <Setter Property="Foreground" Value="DarkGray"/>
+                                    </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
                         </Setter.Value>
@@ -364,33 +368,33 @@
                 </Style>
             </Menu.Resources>
             <MenuItem Header="File">
-                <MenuItem Header="Open..."/>
-                <MenuItem Header="Save"/>
-                <MenuItem Header="Save As..."/>
+                <MenuItem Header="Open..." IsEnabled="False"/>
+                <MenuItem Header="Save" IsEnabled="False"/>
+                <MenuItem Header="Save As..." IsEnabled="False"/>
                 <Separator/>
-                <MenuItem Header="Import..." ToolTip="Import and insert a document into current graph."/>
+                <MenuItem Header="Import..." ToolTip="Import and insert a document into current graph." IsEnabled="False"/>
                 <Separator/>
-                <MenuItem Header="Close"/>
+                <MenuItem Header="Close" IsEnabled="False"/>
             </MenuItem>
             <MenuItem Header="Edit">
-                <MenuItem Header="Select All (Ctrl+A)"/>
+                <MenuItem Header="Select All (Ctrl+A)" IsEnabled="False"/>
             </MenuItem>
             <MenuItem Header="Document">
-                <MenuItem Header="Add Graph"/>
+                <MenuItem Header="Add Graph" IsEnabled="False"/>
                 <Separator/>
-                <MenuItem Name="GoToGraphMenu" Header="Go to Graph">
-                    <MenuItem Header="Default (Main) (F1)"/>
+                <MenuItem Name="GoToGraphMenu" Header="Go to Graph" IsEnabled="False">
+                    <MenuItem Header="Default (Main) (F1)" IsEnabled="False"/>
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="View">
-                <MenuItem Header="Show Nodes Tray" IsCheckable="True" IsChecked="False"/>
+                <MenuItem Header="Show Nodes Tray" IsCheckable="True" IsChecked="False" IsEnabled="False"/>
             </MenuItem>
             <MenuItem Header="Package">
-                <MenuItem Header="Import"/>
+                <MenuItem Header="Import" IsEnabled="False"/>
             </MenuItem>
             <MenuItem Header="Help">
-                <MenuItem Header="Manual"/>
-                <MenuItem Header="Shortcuts"/>
+                <MenuItem Header="Manual" IsEnabled="False"/>
+                <MenuItem Header="Shortcuts" IsEnabled="False"/>
                 <Separator HorizontalAlignment="Stretch"/>
                 <MenuItem Header="About" Click="AboutMenuItem_Click"/>
             </MenuItem>
