@@ -175,7 +175,12 @@ namespace Parcel.Neo.Base.Framework.ViewModels.BaseNodes
                 }
                 timer.Stop();
 
-                return new NodeExecutionResult(new NodeMessage($"Finished in {timer.ElapsedMilliseconds:F2}ms"), cache);
+                if ((int)timer.Elapsed.TotalMilliseconds > 0) // Millisecond scale
+                    return new NodeExecutionResult(new NodeMessage($"Finished in {timer.Elapsed.TotalMilliseconds:F2}ms"), cache);
+                else if ((int)timer.Elapsed.TotalMicroseconds > 0) // Microsecond scale
+                    return new NodeExecutionResult(new NodeMessage($"Finished in {timer.Elapsed.TotalMicroseconds:F2}μs"), cache);
+                else // Nanosecond scale
+                    return new NodeExecutionResult(new NodeMessage($"Finished in {timer.Elapsed.TotalNanoseconds:F2}ns"), cache);
             }
             catch (Exception e)
             {
