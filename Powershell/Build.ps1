@@ -28,7 +28,7 @@ if (-Not (Test-Path $pureExePath)) {
 # Create archive
 $Date = Get-Date -Format yyyyMMdd
 $ArchiveFolder = "$PublishFolder\..\Packages"
-$ArchivePath = "$ArchiveFolder\PV1_Neo_DistributionBuild_B$Date.zip"
+$ArchivePath = "$ArchiveFolder\PV1_Neo_TestBuild_B$Date.zip"
 New-Item -ItemType Directory -Force -Path $ArchiveFolder
 Compress-Archive -Path $PublishFolder\* -DestinationPath $ArchivePath -Force
 
