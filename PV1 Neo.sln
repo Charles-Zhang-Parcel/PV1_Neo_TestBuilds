@@ -65,6 +65,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parcel.Serialization", "..\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parcel.FileSystem", "..\..\Parcel_NExT\C#\Parcel.NExT\Packages\Parcel.FileSystem\Parcel.FileSystem.csproj", "{F287B7C2-C524-4F4C-9884-CE666EA389F5}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Parcel.Image", "..\..\Parcel_NExT\C#\Parcel.NExT\Packages\Parcel.Image\Parcel.Image.csproj", "{75B21B0E-8050-462B-A27F-9CD1F2AA8BC5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -179,6 +181,10 @@ Global
 		{F287B7C2-C524-4F4C-9884-CE666EA389F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F287B7C2-C524-4F4C-9884-CE666EA389F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F287B7C2-C524-4F4C-9884-CE666EA389F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75B21B0E-8050-462B-A27F-9CD1F2AA8BC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75B21B0E-8050-462B-A27F-9CD1F2AA8BC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75B21B0E-8050-462B-A27F-9CD1F2AA8BC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75B21B0E-8050-462B-A27F-9CD1F2AA8BC5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -211,6 +217,7 @@ Global
 		{DB181D22-10B9-4D3A-90A1-6FC3806B1EA0} = {3AC0E0B1-BC65-4389-B9D7-1F423F80DF9A}
 		{C200E5FA-C491-4AAB-8C74-6697A36338CD} = {3AC0E0B1-BC65-4389-B9D7-1F423F80DF9A}
 		{F287B7C2-C524-4F4C-9884-CE666EA389F5} = {3AC0E0B1-BC65-4389-B9D7-1F423F80DF9A}
+		{75B21B0E-8050-462B-A27F-9CD1F2AA8BC5} = {3AC0E0B1-BC65-4389-B9D7-1F423F80DF9A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {02467E9F-99F1-4DF1-9F95-B88C4DA6051D}
