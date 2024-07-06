@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,7 +12,6 @@ using Parcel.Neo.Base.Framework.ViewModels;
 using Parcel.Neo.Base.Framework.ViewModels.BaseNodes;
 using Parcel.Neo.Base.Framework.ViewModels.Primitives;
 using Parcel.Neo.Base.Toolboxes.Basic.Nodes;
-using Parcel.Neo.Base.Toolboxes.DataProcessing.Nodes;
 using Parcel.Neo.PopupWindows;
 using BaseConnection = Parcel.Neo.Base.Framework.ViewModels.BaseConnection;
 using Parcel.Neo.Base.DataTypes;
@@ -171,26 +169,26 @@ namespace Parcel.Neo
         {
             if (!(sender is Button {Tag: ProcessorNode node} button)) return;
 
-            // Auto-Generate
-            if ((node is CSV || node is Excel) && node.ShouldHaveAutoConnection)
-            {
-                OpenFileNode filePathNode = SpawnNode(new ToolboxNodeExport("File Input", typeof(OpenFileNode)),
-                    node.Location + new Vector2D(-200, -60)) as OpenFileNode;
-                Canvas.Schema.TryAddConnection(filePathNode!.MainOutput, node.Input.First());
-
-                OpenFileDialog openFileDialog = new OpenFileDialog() { Title = "Select File to Open" };
-                openFileDialog.Filter = node switch
-                {
-                    CSV _ => "CSV file (*.csv)|*.csv|All types (*.*)|*.*",
-                    Excel _ => "Excel file (*.xlsx)|*.xlsx|All types (*.*)|*.*",
-                    _ => openFileDialog.Filter
-                };
-                if (openFileDialog.ShowDialog() == true)
-                {
-                    filePathNode.Path = openFileDialog.FileName;
-                }
-            }
             // TODO: Somehow recover the following behavior
+            // Auto-Generate
+            //if ((node is CSV || node is Excel) && node.ShouldHaveAutoConnection)
+            //{
+            //    OpenFileNode filePathNode = SpawnNode(new ToolboxNodeExport("File Input", typeof(OpenFileNode)),
+            //        node.Location + new Vector2D(-200, -60)) as OpenFileNode;
+            //    Canvas.Schema.TryAddConnection(filePathNode!.MainOutput, node.Input.First());
+
+            //    OpenFileDialog openFileDialog = new OpenFileDialog() { Title = "Select File to Open" };
+            //    openFileDialog.Filter = node switch
+            //    {
+            //        CSV _ => "CSV file (*.csv)|*.csv|All types (*.*)|*.*",
+            //        Excel _ => "Excel file (*.xlsx)|*.xlsx|All types (*.*)|*.*",
+            //        _ => openFileDialog.Filter
+            //    };
+            //    if (openFileDialog.ShowDialog() == true)
+            //    {
+            //        filePathNode.Path = openFileDialog.FileName;
+            //    }
+            //}
             //if (node is WriteCSV && node.ShouldHaveAutoConnection)
             //{
             //    SaveFileNode filePathNode = SpawnNode(new ToolboxNodeExport("File Path", typeof(SaveFileNode)),
@@ -208,7 +206,7 @@ namespace Parcel.Neo
             {
                 foreach (Tuple<ToolboxNodeExport,Vector2D,InputConnector> generateNode in autoConnect.AutoPopulatedConnectionNodes)
                 {
-                    BaseNode temp = SpawnNode(generateNode.Item1, node.Location + generateNode.Item2);
+                    BaseNode temp = SpawnNode(generateNode.Item1, node.Location + generateNode.Item2); // TODO: Notice this can cause problems to function arguments like string[]
                     if(temp is IMainOutputNode outputNode)
                         Canvas.Schema.TryAddConnection(outputNode.MainOutput, generateNode.Item3);
                 }
@@ -232,7 +230,7 @@ namespace Parcel.Neo
                 Canvas.Save(GetAutoSavePath(CurrentFilePath));
             
             node.IsPreview = true;
-            if (!(node is GraphReferenceNode reference) || _graphPreviewWindows.ContainsKey(reference) || _previewWindows.ContainsKey(reference))  // For graph reference we really don't want to execute it during preview the first time
+            if (node is not GraphReferenceNode reference || _graphPreviewWindows.ContainsKey(reference) || _previewWindows.ContainsKey(reference))  // For graph reference we really don't want to execute it during preview the first time
                 ExecuteAll();
             SpawnPreviewWindow(node);
 
@@ -254,6 +252,81 @@ namespace Parcel.Neo
                 });
                 
                 e.Handled = true;
+            }
+        }
+        private bool _consoleIsOpen;
+        private void ToggleConsoleWindowMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (_consoleIsOpen)
+            {
+                FreeConsole();
+                _consoleIsOpen = false;
+            }
+            else
+            {
+                AllocConsole();
+                _consoleIsOpen = true;
+            }
+        }
+        private void ExportExecutableMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            ExperimentalFeatureWarningWindow warning = new() { Owner = this };
+            if (!warning.ShowDialog() == true)
+                return;
+
+            SaveFileDialog saveFileDialog = new()
+            {
+                Title = "Choose Path to Save Executable (Experimental)",
+                AddExtension = true,
+                DefaultExt = ".exe",
+                Filter = "Executables (.exe)|*.exe"
+            };
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                string filePath = saveFileDialog.FileName;
+                AlgorithmHelper.CompileGraphAOT(filePath, Canvas);
+
+                // TODO: Show output file in file explorer after done
+            }
+        }
+        private void ExportPureScriptsMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            // Remark: Notice exporting like this will NOT cause the graph to be executed (thus avoiding any potential execution-time errors but also means we won't check whether the script will work during runtime - including empty input/invalid parameters check)
+            // The recommendation here (to the user) is to run and make sure things runs before exporting
+
+            ExperimentalFeatureWarningWindow warning = new() { Owner = this };
+            if (!warning.ShowDialog() == true)
+                return;
+
+            OpenFolderDialog folderDialog = new()
+            {
+                Title = "Choose Folder to Save Exported Scripts"
+            };
+
+            if (folderDialog.ShowDialog() == true)
+            {
+                string folderName = folderDialog.FolderName;
+                string mainScriptFilename = $"{System.IO.Path.GetFileNameWithoutExtension(CurrentFilePath)}.cs";
+                AlgorithmHelper.GenerateGraphScripts(folderName, mainScriptFilename, Canvas);
+
+                // TODO: Open output folder in file explorer after done
+            }
+        }
+        private void ExportPythonScriptsMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            ExperimentalFeatureWarningWindow warning = new() { Owner = this };
+            if (!warning.ShowDialog() == true)
+                return;
+
+            OpenFolderDialog folderDialog = new()
+            {
+                Title = "Choose Folder to Save Exported Scripts"
+            };
+
+            if (folderDialog.ShowDialog() == true)
+            {
+                string folderName = folderDialog.FolderName;
+                // Do something with the result
             }
         }
         private void AboutMenuItem_Click(object sender, RoutedEventArgs e)
@@ -371,7 +444,6 @@ namespace Parcel.Neo
                 }
             }
             popupTab.ItemSelectedAdditionalCallback += CreateNodeFromSelectedSearchItem;
-            popupTab.MouseLeave += delegate { popupTab.Close(); };  // ISSUE: This will cause Closed event being called before the OnClick event
             popupTab.Show();
         }
         private void OpenCanvas()
@@ -458,6 +530,12 @@ namespace Parcel.Neo
 
             return rect;
         }
+
+        [DllImport("Kernel32")]
+        public static extern void AllocConsole();
+
+        [DllImport("Kernel32")]
+        public static extern void FreeConsole();
         #endregion
     }
 }

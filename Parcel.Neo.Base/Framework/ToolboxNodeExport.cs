@@ -1,6 +1,4 @@
-﻿using Humanizer; // TODO: Remove thsi dependency on Parcel.Neo.Base
-using Parcel.Neo.Base.Framework.ViewModels;
-using Parcel.Neo.Base.Framework.ViewModels.BaseNodes;
+﻿using Parcel.Neo.Base.Framework.ViewModels.BaseNodes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,19 +10,39 @@ namespace Parcel.Neo.Base.Framework
     {
         private enum NodeImplementationType
         {
-            OOPNode,
-            MethodInfo,
-            AutomaticLambda
+            PV1NativeFrontendImplementedGraphNode,
+            MethodInfo
         }
 
         #region Attributes
         public string Name { get; }
+        public string ArgumentsList
+        {
+            get
+            {
+                switch (ImplementationType)
+                {
+                    case NodeImplementationType.PV1NativeFrontendImplementedGraphNode:
+                        var baseNode = (BaseNode)Activator.CreateInstance(ProcessorNodeType);
+                        if (baseNode is ProcessorNode processor)
+                            return string.Join(", ", processor.Input.Select(i => i.Title));
+                        else return string.Empty;
+                    case NodeImplementationType.MethodInfo: 
+                        return string.Join(", ", Method.GetParameters().Select(p => (Nullable.GetUnderlyingType(p.ParameterType) != null ? $"{p.Name}?" : p.Name)));
+                    default:
+                        throw new ArgumentOutOfRangeException($"Unrecognized implementation type: {ImplementationType}");
+                }
+            }
+        }
+        /// <summary>
+        /// Documentation of node in human-readable text
+        /// </summary>
+        public string? Tooltip { get; set; }
         #endregion
 
         #region Payload Type
         private NodeImplementationType ImplementationType { get; }
         private MethodInfo Method { get; }
-        private AutomaticNodeDescriptor Descriptor { get; }
         private Type ProcessorNodeType { get; }
         #endregion
 
@@ -35,17 +53,11 @@ namespace Parcel.Neo.Base.Framework
             Method = method;
             ImplementationType = NodeImplementationType.MethodInfo;
         }
-        public ToolboxNodeExport(string name, AutomaticNodeDescriptor descriptor)
-        {
-            Name = name;
-            Descriptor = descriptor;
-            ImplementationType = NodeImplementationType.AutomaticLambda;
-        }
         public ToolboxNodeExport(string name, Type type)
         {
             Name = name;
             ProcessorNodeType = type;
-            ImplementationType = NodeImplementationType.OOPNode;
+            ImplementationType = NodeImplementationType.PV1NativeFrontendImplementedGraphNode;
         }
         #endregion
 
@@ -54,7 +66,7 @@ namespace Parcel.Neo.Base.Framework
         {
             switch (ImplementationType)
             {
-                case NodeImplementationType.OOPNode:
+                case NodeImplementationType.PV1NativeFrontendImplementedGraphNode:
                     // TODO: We can use automatic node to invoke constructors for types that have constructor
                     return (BaseNode)Activator.CreateInstance(ProcessorNodeType);
                 case NodeImplementationType.MethodInfo:
@@ -107,8 +119,6 @@ namespace Parcel.Neo.Base.Framework
                         OutputNames = [.. nodeOutputTypes.Select(t => t.Item2)],
                         DefaultInputValues = [.. nodeInputTypes.Select(t => t.Item3)]
                     });
-                case NodeImplementationType.AutomaticLambda:
-                    return new AutomaticProcessorNode(Descriptor);
                 default:
                     throw new ApplicationException("Invalid implementation type.");
             }

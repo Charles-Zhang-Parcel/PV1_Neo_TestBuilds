@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Humanizer;
 using Parcel.Neo.Base.Framework;
 
 namespace Parcel.Neo
@@ -22,13 +21,16 @@ namespace Parcel.Neo
             Dictionary<string, ToolboxNodeExport[]> toolboxes = ToolboxIndexer.Toolboxes;
             PopulateToolboxItems(toolboxes);
 
+            // GUI update
+            NodeCountLabel.Content = $"Total Functions: {_availableNodes.Count}";
+
             // Focus on search bar
             SearchTextBox.Focus();
         }
 
         #region States
         private Dictionary<ToolboxNodeExport, string> _availableNodes; // From node to toolbox name mapping
-        private Dictionary<string, ToolboxNodeExport> _searchResultLookup;
+        private Dictionary<SearchResult, ToolboxNodeExport> _searchResultLookup;
         #endregion
 
         #region View Properties
@@ -42,8 +44,9 @@ namespace Parcel.Neo
                 UpdateSearch(_searchText);
             }
         }
-        private ObservableCollection<string> _searchResults;
-        public ObservableCollection<string> SearchResults
+        public record SearchResult(string Label, string? Tooltip);
+        private ObservableCollection<SearchResult> _searchResults;
+        public ObservableCollection<SearchResult> SearchResults
         {
             get => _searchResults;
             set => SetField(ref _searchResults, value);
@@ -65,47 +68,43 @@ namespace Parcel.Neo
         #region Routines
         private void AddMenuItem(ToolboxNodeExport? node, MenuItem toolboxMenu, string toolboxName)
         {
+            // Seperator
             if (node == null)
                 toolboxMenu.Items.Add(new Separator());
+            // Button item
             else
             {
-                MenuItem item = new() { Header = FormatFriendlyNodeName(node.Name), Tag = node };
+                MenuItem item = new() { Header = $"{node.Name}({node.ArgumentsList})", Tag = node, ToolTip = node.Tooltip };
                 item.Click += NodeMenuItemOnClick;
                 toolboxMenu.Items.Add(item);
                 
                 _availableNodes.Add(node, toolboxName);
             }
-
-            static string FormatFriendlyNodeName(string originalName)
-            {
-                string formatted = originalName.Titleize();
-                string[] words = formatted.Split(' ');
-                if (words.First() == "Get" || words.First() == "Generate") // Remove redundancy in name to make it look cleaner
-                    return string.Join(" ", words.Skip(1));
-                return formatted;
-            }
         }
         private void UpdateSearch(string searchText)
         {
             _searchResultLookup = [];
-            SearchResults = new ObservableCollection<string>(_availableNodes
+            SearchResults = new ObservableCollection<SearchResult>(_availableNodes
                 .Where(n => n.Key.Name.Contains(searchText, StringComparison.CurrentCultureIgnoreCase))
                 .Select(node =>
                 {
-                    string key = $"{node.Value} -> {node.Key.Name}";
-                    _searchResultLookup[key] = node.Key;
-                    return key;
+                    string key = $"{node.Value} -> {node.Key.Name} ({node.Key.ArgumentsList})";
+                    SearchResult result = new(key, node.Key.Tooltip);
+                    _searchResultLookup[result] = node.Key;
+                    return result;
                 }));
 
             if (!string.IsNullOrWhiteSpace(searchText))
             {
                 DefaultCategoriesVisibility = Visibility.Collapsed;
-                SearchResultsVisibility = Visibility.Visible;    
+                SearchResultsVisibility = Visibility.Visible;
+                NodeCountLabel.Content = $"Found Matches: {SearchResults.Count}";
             }
             else
             {
                 DefaultCategoriesVisibility = Visibility.Visible;
                 SearchResultsVisibility = Visibility.Collapsed;
+                NodeCountLabel.Content = $"Total Functions: {_availableNodes.Count}";
             }
         }
         private void PopulateToolboxItems(Dictionary<string, ToolboxNodeExport[]> toolboxes)
@@ -141,7 +140,7 @@ namespace Parcel.Neo
         #region GUI Events
         private void PopupTab_OnMouseDown(object sender, MouseButtonEventArgs e)
         {
-            // TODO: Why do we have this?
+            // TODO: Why do we have this? // Remark: It's so that it's possible to drag-move the popup panel when clicking on the title bar. Not super useful though.
             DragMove();
         }
         private void PopupTab_OnPreviewKeyDown(object sender, KeyEventArgs e)
@@ -159,14 +158,14 @@ namespace Parcel.Neo
         }
         private void SearchResultsListViewLabel_OnMouseDown(object sender, MouseButtonEventArgs e)
         {
-            ItemSelectedAdditionalCallback(_searchResultLookup[(((Label) sender).Content as string)!]);
+            ItemSelectedAdditionalCallback(_searchResultLookup[(((Label) sender).DataContext as SearchResult)!]);
             Close();
         }
         private void SearchResultsListView_OnPreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter && SearchResults.Count != 0)
             {
-                ItemSelectedAdditionalCallback(_searchResultLookup[(string)((ListBox) sender).SelectedItem ?? SearchResults.First()]);
+                ItemSelectedAdditionalCallback(_searchResultLookup[(SearchResult)((ListBox) sender).SelectedItem ?? SearchResults.First()]);
                 Close();
                 e.Handled = true;
             }
@@ -185,6 +184,10 @@ namespace Parcel.Neo
                 SearchResultsListView.Focus();
                 e.Handled = true;
             }
+        }
+        private void NodesWindow_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Close();
         }
         #endregion
     }

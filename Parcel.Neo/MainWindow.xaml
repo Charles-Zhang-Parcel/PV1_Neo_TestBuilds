@@ -10,12 +10,10 @@
         xmlns:baseNodes="clr-namespace:Parcel.Neo.Base.Framework.ViewModels.BaseNodes;assembly=Parcel.Neo.Base"
         xmlns:primitives="clr-namespace:Parcel.Neo.Base.Framework.ViewModels.Primitives;assembly=Parcel.Neo.Base"
         xmlns:converters="clr-namespace:Parcel.Neo.Converters"
-        xmlns:nodes="clr-namespace:Parcel.Neo.Base.Toolboxes.DataProcessing.Nodes;assembly=Parcel.Neo.Base"
         xmlns:System="clr-namespace:System;assembly=System.Runtime"
         xmlns:dataTypes="clr-namespace:Parcel.Neo.Base.DataTypes;assembly=Parcel.Neo.Base"
         xmlns:advanced="clr-namespace:Parcel.Neo.Base.Framework.Advanced;assembly=Parcel.Neo.Base"
-        xmlns:nodes1="clr-namespace:Parcel.Neo.Base.Toolboxes.Math.Nodes;assembly=Parcel.Neo.Base"
-        xmlns:specialNodes="clr-namespace:Parcel.Neo.Base.Toolboxes.Special.Nodes;assembly=Parcel.Neo.base"
+        xmlns:specialNodes="clr-namespace:Parcel.Neo.Base.Toolboxes.Basic.Nodes;assembly=Parcel.Neo.base"
         mc:Ignorable="d"
         Title="{Binding DynamicTitle}" Height="700" Width="1024"
         Background="#1E1E1E"
@@ -305,10 +303,10 @@
                     <DataTemplate DataType="{x:Type viewModels:BaseConnector}">
                         <nodify:NodeInput/>
                     </DataTemplate>
-                    <DataTemplate DataType="{x:Type nodes:DatabaseTableInputConnector}">
+                    <DataTemplate DataType="{x:Type specialNodes:DatabaseTableInputConnector}">
                         <nodify:NodeInput>
                             <nodify:NodeInput.HeaderTemplate>
-                                <DataTemplate DataType="{x:Type nodes:DatabaseTableInputConnector}">
+                                <DataTemplate DataType="{x:Type specialNodes:DatabaseTableInputConnector}">
                                     <StackPanel Orientation="Horizontal" DataContext="{Binding Path=DataContext, 
                                                     RelativeSource={RelativeSource AncestorType={x:Type nodify:NodeInput},Mode=FindAncestor}}">
                                         <TextBlock Text="{Binding Title}"
@@ -364,18 +362,27 @@
                 </Style>
             </Menu.Resources>
             <MenuItem Header="File">
-                <MenuItem Header="Open..."/>
-                <MenuItem Header="Save"/>
-                <MenuItem Header="Save As..."/>
-                <Separator/>
-                <MenuItem Header="Import..." ToolTip="Import and insert a document into current graph."/>
+                <MenuItem Header="Open..." Visibility="Collapsed"/>
+                <MenuItem Header="Save" Visibility="Collapsed"/>
+                <MenuItem Header="Save As..." Visibility="Collapsed"/>
+                <Separator Visibility="Collapsed"/>
+                <MenuItem Header="Import..." ToolTip="Import and insert a document into current graph." Visibility="Collapsed"/>
+                <MenuItem Header="Export" ToolTip="Export graph into various formats.">
+                    <MenuItem Header="PDF" Visibility="Collapsed"/>
+                    <MenuItem Header="Markdown" Visibility="Collapsed"/>
+                    <MenuItem Header="PNG" Visibility="Collapsed"/>
+                    <MenuItem Header="Executable..." Click="ExportExecutableMenuItem_Click"/>
+                    <MenuItem Header="C# Project..." Visibility="Collapsed"/>
+                    <MenuItem Header="Pure Script(s) (Pure 2)..." Click="ExportPureScriptsMenuItem_Click"/>
+                    <MenuItem Header="Python Script(s)..." Visibility="Collapsed"/>
+                </MenuItem>
                 <Separator/>
                 <MenuItem Header="Close"/>
             </MenuItem>
-            <MenuItem Header="Edit">
+            <MenuItem Header="Edit" Visibility="Collapsed">
                 <MenuItem Header="Select All (Ctrl+A)"/>
             </MenuItem>
-            <MenuItem Header="Document">
+            <MenuItem Header="Document" Visibility="Collapsed">
                 <MenuItem Header="Add Graph"/>
                 <Separator/>
                 <MenuItem Name="GoToGraphMenu" Header="Go to Graph">
@@ -383,15 +390,16 @@
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="View">
-                <MenuItem Header="Show Nodes Tray" IsCheckable="True" IsChecked="False"/>
+                <MenuItem Header="Console" Click="ToggleConsoleWindowMenuItem_Click"/>
+                <MenuItem Header="Show Nodes Tray" IsCheckable="True" IsChecked="False" Visibility="Collapsed"/>
             </MenuItem>
-            <MenuItem Header="Package">
+            <MenuItem Header="Package" Visibility="Collapsed">
                 <MenuItem Header="Import"/>
             </MenuItem>
             <MenuItem Header="Help">
-                <MenuItem Header="Manual"/>
-                <MenuItem Header="Shortcuts"/>
-                <Separator HorizontalAlignment="Stretch"/>
+                <MenuItem Header="Manual" Visibility="Collapsed"/>
+                <MenuItem Header="Shortcuts" Visibility="Collapsed"/>
+                <Separator Visibility="Collapsed"/>
                 <MenuItem Header="About" Click="AboutMenuItem_Click"/>
             </MenuItem>
         </Menu>
@@ -505,34 +513,6 @@
                                     </Style.Triggers>
                                 </Style>
 
-                                <DataTemplate DataType="{x:Type nodes1:Calculator}">
-                                    <TextBox Text="{Binding Value}"
-                                     MinWidth="100" PreviewKeyDown="PrimitiveInputTextbox_OnPreviewKeyDown_CommandOverride"
-                                     Margin="5 0 0 0" />
-                                </DataTemplate>
-
-                                <DataTemplate DataType="{x:Type nodes1:Expression}">
-                                    <DockPanel LastChildFill="True">
-                                        <TextBox Text="{Binding Value}"
-                                         MinWidth="100" PreviewKeyDown="PrimitiveInputTextbox_OnPreviewKeyDown_CommandOverride"
-                                         Margin="5 0 0 0" DockPanel.Dock="Top" />
-                                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-                                            <Button Style="{StaticResource IconButton}"
-                                            Content="{StaticResource PlusIcon}"
-                                            Command="{Binding AddEntryCommand}" />
-                                            <Button Style="{StaticResource IconButton}"
-                                            Content="{StaticResource RemoveKeyIcon}"
-                                            Command="{Binding RemoveEntryCommand}" />
-                                            <TextBlock Foreground="{Binding Message.Type, Converter={StaticResource NodeMessageTypeToBrushColorConverter}}" 
-                                               Margin="0" Padding="0" 
-                                               MaxWidth="256" TextWrapping="WrapWithOverflow"
-                                               Text="{Binding Message.Content}"
-                                               Visibility="{Binding Message.Type, Converter={StaticResource NodeMessageTypeToVisibilityConverter}}">
-                                            </TextBlock>
-                                        </StackPanel>
-                                    </DockPanel>
-                                </DataTemplate>
-
                                 <DataTemplate DataType="{x:Type advanced:GraphInputOutputNodeBase}">
                                     <DataTemplate.Resources>
                                         <Style TargetType="TextBox">
@@ -567,7 +547,7 @@
                                     </DockPanel>
                                 </DataTemplate>
 
-                                <DataTemplate DataType="{x:Type nodes:Dictionary}">
+                                <DataTemplate DataType="{x:Type specialNodes:Dictionary}">
                                     <DataTemplate.Resources>
                                         <Style TargetType="TextBox">
                                             <Setter Property="VerticalAlignment" Value="Center"></Setter>
@@ -589,7 +569,7 @@
                                                 </Style>
                                             </ListView.ItemContainerStyle>
                                             <ListView.ItemTemplate>
-                                                <DataTemplate DataType="{x:Type nodes:DictionaryEntryDefinition}">
+                                                <DataTemplate DataType="{x:Type specialNodes:DictionaryEntryDefinition}">
                                                     <DockPanel LastChildFill="True" MinWidth="150">
                                                         <TextBox Text="{Binding Name}" PreviewKeyDown="PrimitiveInputTextbox_OnPreviewKeyDown_CommandOverride"></TextBox>
                                                         <ComboBox ItemsSource="{Binding Source={StaticResource DictionaryEntryTypeEntriesFromEnum}}"
@@ -602,7 +582,7 @@
                                     </DockPanel>
                                 </DataTemplate>
 
-                                <DataTemplate DataType="{x:Type nodes:DataTable}">
+                                <DataTemplate DataType="{x:Type specialNodes:DataTable}">
                                     <DataTemplate.Resources>
                                         <Style TargetType="TextBox">
                                             <Setter Property="VerticalAlignment" Value="Center"></Setter>
@@ -624,7 +604,7 @@
                                                 </Style>
                                             </ListView.ItemContainerStyle>
                                             <ListView.ItemTemplate>
-                                                <DataTemplate DataType="{x:Type nodes:DataTableFieldDefinition}">
+                                                <DataTemplate DataType="{x:Type specialNodes:DataTableFieldDefinition}">
                                                     <DockPanel LastChildFill="True" MinWidth="150">
                                                         <TextBox Text="{Binding Name}" PreviewKeyDown="PrimitiveInputTextbox_OnPreviewKeyDown_CommandOverride"></TextBox>
                                                         <ComboBox ItemsSource="{Binding Source={StaticResource DictionaryEntryTypeEntriesFromEnum}}"
